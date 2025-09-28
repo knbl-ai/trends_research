@@ -5,8 +5,15 @@ import { FashionType, getPromptByType } from '@/lib/prompts';
 export async function POST(request: NextRequest) {
   try {
     // Parse the request body to get the fashion type
-    const body = await request.json();
-    const fashionType: FashionType = body.fashionType || 'high-fashion';
+    let fashionType: FashionType = 'high-fashion';
+
+    try {
+      const body = await request.json();
+      fashionType = body.fashionType || 'high-fashion';
+    } catch (parseError) {
+      // If body parsing fails, use default fashion type
+      console.warn('Failed to parse request body, using default fashion type:', parseError);
+    }
 
     // Get the appropriate prompt for the selected fashion type
     const prompt = getPromptByType(fashionType);
