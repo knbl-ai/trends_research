@@ -5,7 +5,25 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
 import { TrendsApiResponse } from '@/lib/types';
-import { FashionType, getAllFashionTypes } from '@/lib/prompts';
+type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel';
+
+interface FashionStyleConfig {
+  id: FashionType;
+  name: string;
+}
+
+const FASHION_STYLES: FashionStyleConfig[] = [
+  { id: 'high-fashion', name: 'High Fashion' },
+  { id: 'street-fashion', name: 'Street Fashion' },
+  { id: 'casual', name: 'Casual' },
+  { id: 'social-media', name: 'Social Media' },
+  { id: 'celebrities', name: 'Celebrities' },
+  { id: 'israel', name: 'Israel' }
+];
+
+function getAllFashionTypes(): FashionStyleConfig[] {
+  return FASHION_STYLES;
+}
 import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag } from 'lucide-react';
 
 export function TrendsDisplay() {
