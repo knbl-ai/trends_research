@@ -1,12 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { TrendsApiRequest, TrendsApiResponse } from '@/lib/types';
+import { FashionType, getPromptByType } from '@/lib/prompts';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    // Hardcoded request as specified by the user
+    // Parse the request body to get the fashion type
+    const body = await request.json();
+    const fashionType: FashionType = body.fashionType || 'high-fashion';
+
+    // Get the appropriate prompt for the selected fashion type
+    const prompt = getPromptByType(fashionType);
+
     const trendsRequest: TrendsApiRequest = {
       type: "reasoning",
-      prompt: "Research the top 3 most current fashion trends (2025-late) globally. For each trend, provide:A detailed description of what the trend is, including how it's showing up in runway shows, streetwear, and consumer behaviour.Key sub-elements (colours, cuts, fabrics, inspirations, accessories).How and why it has emerged (cultural, economic, social drivers). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number.",
+      prompt: prompt,
       images_num: 3
     };
 
@@ -28,10 +35,6 @@ export async function POST() {
       );
     }
 
-    // Log request details for debugging
-    console.log('Making API request to:', apiEndpoint);
-    console.log('Request headers:', { 'Content-Type': 'application/json', 'x-api-key': apiKey?.substring(0, 8) + '...' });
-    console.log('Request body:', JSON.stringify(trendsRequest, null, 2));
 
     // Make the API request
     const response = await fetch(apiEndpoint, {
@@ -50,7 +53,6 @@ export async function POST() {
     }
 
     const responseText = await response.text();
-    console.log('API Response:', responseText.substring(0, 500)); // Log first 500 chars
 
     let data: TrendsApiResponse;
     try {

@@ -5,14 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
 import { TrendsApiResponse } from '@/lib/types';
-import { TrendingUp, AlertCircle } from 'lucide-react';
+import { FashionType, getAllFashionTypes } from '@/lib/prompts';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag } from 'lucide-react';
 
 export function TrendsDisplay() {
   const [trends, setTrends] = useState<TrendsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFashionType, setSelectedFashionType] = useState<FashionType>('high-fashion');
 
-  const fetchTrends = async () => {
+  const fetchTrends = async (fashionType: FashionType = selectedFashionType) => {
     setLoading(true);
     setError(null);
 
@@ -22,6 +24,7 @@ export function TrendsDisplay() {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ fashionType }),
       });
 
       if (!response.ok) {
@@ -35,6 +38,23 @@ export function TrendsDisplay() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getFashionIcon = (type: FashionType) => {
+    switch (type) {
+      case 'high-fashion': return Sparkles;
+      case 'street-fashion': return Users;
+      case 'casual': return Shirt;
+      case 'social-media': return Heart;
+      case 'celebrities': return Star;
+      case 'israel': return Flag;
+      default: return TrendingUp;
+    }
+  };
+
+  const handleFashionTypeSelect = (type: FashionType) => {
+    setSelectedFashionType(type);
+    fetchTrends(type);
   };
 
   const renderSkeletons = () => (
@@ -71,24 +91,36 @@ export function TrendsDisplay() {
           Explore cutting-edge styles, colors, and inspirations shaping the future of fashion.
         </p>
 
-        <Button
-          onClick={fetchTrends}
-          disabled={loading}
-          size="lg"
-          className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-medium tracking-wide transition-all duration-300 hover:scale-105 focus-elegant"
-        >
-          {loading ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-              Researching Trends...
-            </>
-          ) : (
-            <>
-              <TrendingUp className="mr-3 h-5 w-5" />
-              Show Latest Trends
-            </>
-          )}
-        </Button>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          {getAllFashionTypes().map((fashionStyle) => {
+            const IconComponent = getFashionIcon(fashionStyle.id);
+            const isSelected = selectedFashionType === fashionStyle.id;
+
+            return (
+              <Button
+                key={fashionStyle.id}
+                onClick={() => handleFashionTypeSelect(fashionStyle.id)}
+                disabled={loading}
+                variant={isSelected ? "default" : "outline"}
+                className={`p-6 h-auto flex flex-col items-center gap-2 transition-all duration-300 hover:scale-105 ${
+                  isSelected
+                    ? 'bg-black hover:bg-gray-800 text-white border-black'
+                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <IconComponent className="h-6 w-6" />
+                <span className="text-sm font-medium text-center">{fashionStyle.name}</span>
+              </Button>
+            );
+          })}
+        </div>
+
+        {loading && (
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
+            <p className="text-gray-600">Researching {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name} trends...</p>
+          </div>
+        )}
       </div>
 
       {/* Error State */}
@@ -100,7 +132,7 @@ export function TrendsDisplay() {
           <h3 className="font-serif text-2xl text-gray-900 mb-2">Something went wrong</h3>
           <p className="text-gray-600 mb-6">{error}</p>
           <Button
-            onClick={fetchTrends}
+            onClick={() => fetchTrends()}
             variant="outline"
             className="border-gray-300 hover:bg-gray-50"
           >
@@ -117,7 +149,7 @@ export function TrendsDisplay() {
         <div className="space-y-16">
           <div className="text-center">
             <h2 className="font-serif text-3xl md:text-4xl text-gray-900 mb-4">
-              Latest Fashion Trends
+              Latest {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name} Trends
             </h2>
             <p className="text-gray-600 text-lg">
               Generated on {new Date(trends.request_info.generated_at).toLocaleDateString()}
