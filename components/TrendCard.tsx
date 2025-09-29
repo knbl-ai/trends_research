@@ -1,10 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendData } from '@/lib/types';
-import { ExternalLink } from 'lucide-react';
 
 interface TrendCardProps {
   trend: TrendData;
@@ -91,26 +89,6 @@ export function TrendCard({ trend }: TrendCardProps) {
           </div>
         )}
 
-        {/* Sources */}
-        {trend.references && trend.references.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="font-serif text-xl text-gray-900">Sources & References</h4>
-            <div className="space-y-2">
-              {trend.references.map((reference, index) => (
-                <Link
-                  key={index}
-                  href={reference}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm group"
-                >
-                  <ExternalLink size={14} className="group-hover:scale-110 transition-transform duration-200" />
-                  <span className="break-all">{reference}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

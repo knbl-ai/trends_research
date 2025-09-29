@@ -24,7 +24,8 @@ const FASHION_STYLES: FashionStyleConfig[] = [
 function getAllFashionTypes(): FashionStyleConfig[] {
   return FASHION_STYLES;
 }
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag } from 'lucide-react';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 export function TrendsDisplay() {
   const [trends, setTrends] = useState<TrendsApiResponse | null>(null);
@@ -181,6 +182,42 @@ export function TrendsDisplay() {
               </div>
             ))}
           </div>
+
+          {/* References Section */}
+          {(() => {
+            const allReferences = trends.data.trends
+              .flatMap(trend => trend.references || [])
+              .filter((reference, index, arr) => arr.indexOf(reference) === index); // Remove duplicates
+
+            return allReferences.length > 0 && (
+              <div className="mt-16 pt-12 border-t border-gray-200">
+                <div className="text-center mb-8">
+                  <h3 className="font-serif text-2xl md:text-3xl text-gray-900 mb-4">
+                    Sources & References
+                  </h3>
+                  <p className="text-gray-600 text-lg">
+                    All sources used to research these fashion trends
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {allReferences.map((reference, index) => (
+                    <Link
+                      key={index}
+                      href={reference}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-4 bg-white/60 backdrop-blur-sm rounded-lg border hover:bg-white/80 hover:shadow-md transition-all duration-200 text-sm group"
+                    >
+                      <ExternalLink size={16} className="text-gray-500 group-hover:text-gray-700 group-hover:scale-110 transition-all duration-200 flex-shrink-0" />
+                      <span className="break-all text-gray-700 group-hover:text-gray-900 leading-tight">
+                        {reference}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>
