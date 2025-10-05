@@ -5,33 +5,28 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
 import { TrendsApiResponse } from '@/lib/types';
-type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel';
-
-interface FashionStyleConfig {
-  id: FashionType;
-  name: string;
-}
-
-const FASHION_STYLES: FashionStyleConfig[] = [
-  { id: 'high-fashion', name: 'High Fashion' },
-  { id: 'street-fashion', name: 'Street Fashion' },
-  { id: 'casual', name: 'Casual' },
-  { id: 'social-media', name: 'Social Media' },
-  { id: 'celebrities', name: 'Celebrities' },
-  { id: 'israel', name: 'Israel' }
-];
-
-function getAllFashionTypes(): FashionStyleConfig[] {
-  return FASHION_STYLES;
-}
+import { FASHION_PROMPTS, FashionType, FashionStyleConfig } from '@/lib/prompts';
 import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
-export function TrendsDisplay() {
+function getAllFashionTypes(): FashionStyleConfig[] {
+  return Object.values(FASHION_PROMPTS);
+}
+
+export function AdminTrendsDisplay() {
   const [trends, setTrends] = useState<TrendsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedFashionType, setSelectedFashionType] = useState<FashionType>('high-fashion');
+  const [customPrompts, setCustomPrompts] = useState<Record<FashionType, string>>(
+    Object.fromEntries(
+      Object.entries(FASHION_PROMPTS).map(([key, config]) => [key, config.prompt])
+    ) as Record<FashionType, string>
+  );
+  const [includeImages, setIncludeImages] = useState(true);
 
   const fetchTrends = async (fashionType: FashionType = selectedFashionType) => {
     setLoading(true);
@@ -43,7 +38,11 @@ export function TrendsDisplay() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fashionType }),
+        body: JSON.stringify({
+          fashionType,
+          prompt: customPrompts[fashionType],
+          num_images: includeImages ? 3 : 0
+        }),
       });
 
       if (!response.ok) {
@@ -75,6 +74,13 @@ export function TrendsDisplay() {
     setSelectedFashionType(type);
   };
 
+  const handlePromptChange = (type: FashionType, newPrompt: string) => {
+    setCustomPrompts(prev => ({
+      ...prev,
+      [type]: newPrompt
+    }));
+  };
+
   const renderSkeletons = () => (
     <div className="space-y-12">
       {[1, 2, 3].map((i) => (
@@ -101,13 +107,24 @@ export function TrendsDisplay() {
       {/* Header Section */}
       <div className="text-center mb-16 animate-fade-in-up">
         <h1 className="font-serif text-5xl md:text-7xl text-gray-900 mb-6 tracking-tight">
-          Fashion<br />
-          <span className="text-gradient">Trends Research</span>
+          Fashion Trends<br />
+          <span className="text-gradient">Admin Panel</span>
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light leading-relaxed">
-          Discover the latest global fashion trends with AI-powered research.
-          Explore cutting-edge styles, colors, and inspirations shaping the future of fashion.
+          Customize prompts and settings for fashion trend research.
         </p>
+
+        {/* Images Checkbox */}
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <Checkbox
+            id="images"
+            checked={includeImages}
+            onCheckedChange={(checked) => setIncludeImages(checked === true)}
+          />
+          <Label htmlFor="images" className="text-sm font-medium cursor-pointer">
+            Images
+          </Label>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           {getAllFashionTypes().map((fashionStyle) => {
@@ -131,6 +148,20 @@ export function TrendsDisplay() {
               </Button>
             );
           })}
+        </div>
+
+        {/* Prompt Editor for Selected Fashion Type */}
+        <div className="mb-8 text-left">
+          <Label htmlFor="prompt" className="text-sm font-medium mb-2 block">
+            Prompt for {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name}
+          </Label>
+          <Textarea
+            id="prompt"
+            value={customPrompts[selectedFashionType]}
+            onChange={(e) => handlePromptChange(selectedFashionType, e.target.value)}
+            className="min-h-[120px] bg-white/60 backdrop-blur-sm border-gray-300"
+            placeholder="Enter custom prompt..."
+          />
         </div>
 
         <Button
@@ -184,8 +215,18 @@ export function TrendsDisplay() {
 
           <div className="space-y-12">
             {trends.data.trends.map((trend, index) => (
-              <div key={trend.number || index}>
+              <div key={trend.number || index} className="space-y-4">
                 <TrendCard trend={trend} />
+
+                {/* Admin Prompt Display */}
+                <div className="p-4 bg-gray-100/60 backdrop-blur-sm rounded-lg border border-gray-300">
+                  <Label className="text-xs font-medium text-gray-600 mb-2 block">
+                    Current Prompt Used
+                  </Label>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {trends.request_info.search_prompt}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

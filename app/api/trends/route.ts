@@ -20,22 +20,26 @@ export async function POST(request: NextRequest) {
   try {
     // Parse the request body to get the fashion type
     let fashionType: FashionType = 'high-fashion';
+    let customPrompt: string | undefined;
+    let numImages: number = 3;
 
     try {
       const body = await request.json();
       fashionType = body.fashionType || 'high-fashion';
+      customPrompt = body.prompt;
+      numImages = body.num_images !== undefined ? body.num_images : 3;
     } catch (parseError) {
       // If body parsing fails, use default fashion type
       console.warn('Failed to parse request body, using default fashion type:', parseError);
     }
 
-    // Get the appropriate prompt for the selected fashion type
-    const prompt = getPromptByType(fashionType);
+    // Use custom prompt if provided, otherwise get the default prompt for the fashion type
+    const prompt = customPrompt || getPromptByType(fashionType);
 
     const trendsRequest: TrendsApiRequest = {
       type: "reasoning",
       prompt: prompt,
-      images_num: 3
+      images_num: numImages
     };
 
     // Get the API endpoint and key from environment variables
