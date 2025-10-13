@@ -18,6 +18,7 @@ export interface TrendsApiResponse {
   };
   request_info: {
     search_type: string;
+    trend_category: string;
     search_prompt: string;
     images_per_trend: number;
     generated_at: string;
@@ -28,4 +29,34 @@ export interface TrendsApiRequest {
   type: "basic" | "reasoning" | "deep";
   prompt: string;
   images_num: number;
+  trend_category?: 'fashion' | 'military';
+  aspect_ratio?: '3:4' | '16:9';
 }
+
+export type TrendCategory = 'fashion' | 'military';
+
+export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel';
+
+export type MilitaryType = 'tactical-gear' | 'uniforms' | 'weapons-systems' | 'vehicles' | 'cyber-defense' | 'global-conflicts';
+
+export type SubcategoryType = FashionType | MilitaryType;
+
+export interface FashionPromptDocument {
+  _id?: string;
+  id: FashionType;
+  name: string;
+  prompt: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface MilitaryPromptDocument {
+  _id?: string;
+  id: MilitaryType;
+  name: string;
+  prompt: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type TrendPromptDocument = FashionPromptDocument | MilitaryPromptDocument;

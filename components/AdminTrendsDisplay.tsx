@@ -1,47 +1,83 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
-import { TrendsApiResponse } from '@/lib/types';
-import { FASHION_PROMPTS, FashionType, FashionStyleConfig } from '@/lib/prompts';
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink } from 'lucide-react';
+import { TrendsApiResponse, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument, TrendCategory } from '@/lib/types';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink, Save, Shield, Zap, Crosshair, Truck, Lock, Globe } from 'lucide-react';
 import Link from 'next/link';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-function getAllFashionTypes(): FashionStyleConfig[] {
-  return Object.values(FASHION_PROMPTS);
+interface AdminTrendsDisplayProps {
+  category: TrendCategory;
 }
 
-export function AdminTrendsDisplay() {
+export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
   const [trends, setTrends] = useState<TrendsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFashionType, setSelectedFashionType] = useState<FashionType>('high-fashion');
-  const [customPrompts, setCustomPrompts] = useState<Record<FashionType, string>>(
-    Object.fromEntries(
-      Object.entries(FASHION_PROMPTS).map(([key, config]) => [key, config.prompt])
-    ) as Record<FashionType, string>
-  );
+  const [selectedSubcategory, setSelectedSubcategory] = useState<SubcategoryType | null>(null);
+  const [prompts, setPrompts] = useState<(FashionPromptDocument | MilitaryPromptDocument)[]>([]);
+  const [promptsLoading, setPromptsLoading] = useState(true);
+  const [customPrompts, setCustomPrompts] = useState<Record<SubcategoryType, string>>({} as Record<SubcategoryType, string>);
   const [includeImages, setIncludeImages] = useState(true);
+  const [updateStatus, setUpdateStatus] = useState<{ type: SubcategoryType; status: 'success' | 'error' | null }>({ type: 'high-fashion', status: null });
+  const [updatingPrompt, setUpdatingPrompt] = useState<SubcategoryType | null>(null);
 
-  const fetchTrends = async (fashionType: FashionType = selectedFashionType) => {
+  // Fetch prompts from database on mount or category change
+  useEffect(() => {
+    const fetchPrompts = async () => {
+      setPromptsLoading(true);
+      try {
+        const response = await fetch(`/api/prompts?category=${category}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch prompts');
+        }
+        const data = await response.json();
+        if (data.success) {
+          setPrompts(data.data);
+          // Initialize customPrompts with fetched data
+          const promptsMap = data.data.reduce((acc: Record<SubcategoryType, string>, prompt: FashionPromptDocument | MilitaryPromptDocument) => {
+            acc[prompt.id] = prompt.prompt;
+            return acc;
+          }, {} as Record<SubcategoryType, string>);
+          setCustomPrompts(promptsMap);
+          if (data.data.length > 0) {
+            setSelectedSubcategory(data.data[0].id);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch prompts:', err);
+        setError('Failed to load prompts from database');
+      } finally {
+        setPromptsLoading(false);
+      }
+    };
+
+    fetchPrompts();
+  }, [category]);
+
+  const fetchTrends = async (subcategory: SubcategoryType = selectedSubcategory!) => {
     setLoading(true);
     setError(null);
 
     try {
+      // Fashion gets 3 images (vertical), military gets 1 image (horizontal)
+      const numImages = includeImages ? (category === 'fashion' ? 3 : 1) : 0;
+
       const response = await fetch('/api/trends', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          fashionType,
-          prompt: customPrompts[fashionType],
-          num_images: includeImages ? 3 : 0
+          subcategoryType: subcategory,
+          trendCategory: category,
+          prompt: customPrompts[subcategory],
+          num_images: numImages
         }),
       });
 
@@ -58,27 +94,87 @@ export function AdminTrendsDisplay() {
     }
   };
 
-  const getFashionIcon = (type: FashionType) => {
-    switch (type) {
-      case 'high-fashion': return Sparkles;
-      case 'street-fashion': return Users;
-      case 'casual': return Shirt;
-      case 'social-media': return Heart;
-      case 'celebrities': return Star;
-      case 'israel': return Flag;
-      default: return TrendingUp;
-    }
+  const getIcon = (id: SubcategoryType) => {
+    const iconMap: Record<SubcategoryType, typeof TrendingUp> = {
+      // Fashion icons
+      'high-fashion': Sparkles,
+      'street-fashion': Users,
+      'casual': Shirt,
+      'social-media': Heart,
+      'celebrities': Star,
+      'israel': Flag,
+      // Military icons
+      'tactical-gear': Shield,
+      'uniforms': Users,
+      'weapons-systems': Crosshair,
+      'vehicles': Truck,
+      'cyber-defense': Lock,
+      'global-conflicts': Globe
+    };
+    return iconMap[id] || TrendingUp;
   };
 
-  const handleFashionTypeSelect = (type: FashionType) => {
-    setSelectedFashionType(type);
+  const handleSubcategorySelect = (id: SubcategoryType) => {
+    setSelectedSubcategory(id);
   };
 
-  const handlePromptChange = (type: FashionType, newPrompt: string) => {
+  const handlePromptChange = (id: SubcategoryType, newPrompt: string) => {
     setCustomPrompts(prev => ({
       ...prev,
-      [type]: newPrompt
+      [id]: newPrompt
     }));
+  };
+
+  const getCategoryTitle = () => {
+    return category === 'fashion' ? 'Fashion' : 'Military';
+  };
+
+  const handleUpdatePrompt = async (id: SubcategoryType) => {
+    setUpdatingPrompt(id);
+    setUpdateStatus({ type: id, status: null });
+
+    try {
+      const response = await fetch(`/api/prompts/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: customPrompts[id],
+          category: category
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update prompt');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setUpdateStatus({ type, status: 'success' });
+        // Update the prompts list with the new data
+        setPrompts(prev => prev.map(p =>
+          p.id === type ? { ...p, prompt: customPrompts[type], updatedAt: new Date() } : p
+        ));
+
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setUpdateStatus(prev => prev.type === type ? { ...prev, status: null } : prev);
+        }, 3000);
+      } else {
+        throw new Error(data.error || 'Failed to update prompt');
+      }
+    } catch (err) {
+      console.error('Failed to update prompt:', err);
+      setUpdateStatus({ type, status: 'error' });
+
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setUpdateStatus(prev => prev.type === type ? { ...prev, status: null } : prev);
+      }, 5000);
+    } finally {
+      setUpdatingPrompt(null);
+    }
   };
 
   const renderSkeletons = () => (
@@ -107,11 +203,11 @@ export function AdminTrendsDisplay() {
       {/* Header Section */}
       <div className="text-center mb-16 animate-fade-in-up">
         <h1 className="font-serif text-5xl md:text-7xl text-gray-900 mb-6 tracking-tight">
-          Fashion Trends<br />
+          {getCategoryTitle()} Trends<br />
           <span className="text-gradient">Admin Panel</span>
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light leading-relaxed">
-          Customize prompts and settings for fashion trend research.
+          Customize prompts and settings for {category} trend research.
         </p>
 
         {/* Images Checkbox */}
@@ -127,46 +223,79 @@ export function AdminTrendsDisplay() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          {getAllFashionTypes().map((fashionStyle) => {
-            const IconComponent = getFashionIcon(fashionStyle.id);
-            const isSelected = selectedFashionType === fashionStyle.id;
+          {promptsLoading ? (
+            <div className="col-span-full text-center py-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
+            </div>
+          ) : (
+            prompts.map((prompt) => {
+              const IconComponent = getIcon(prompt.id);
+              const isSelected = selectedSubcategory === prompt.id;
 
-            return (
+              return (
+                <Button
+                  key={prompt.id}
+                  onClick={() => handleSubcategorySelect(prompt.id)}
+                  disabled={loading}
+                  variant={isSelected ? "default" : "outline"}
+                  className={`p-6 h-auto flex flex-col items-center gap-2 transition-all duration-300 hover:scale-105 ${
+                    isSelected
+                      ? 'bg-black hover:bg-gray-800 text-white border-black'
+                      : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                  }`}
+                >
+                  <IconComponent className="h-6 w-6" />
+                  <span className="text-sm font-medium text-center">{prompt.name}</span>
+                </Button>
+              );
+            })
+          )}
+        </div>
+
+        {/* Prompt Editor for Selected Subcategory */}
+        {!promptsLoading && selectedSubcategory && (
+          <div className="mb-8 text-left">
+            <Label htmlFor="prompt" className="text-sm font-medium mb-2 block">
+              Prompt for {prompts.find(p => p.id === selectedSubcategory)?.name}
+            </Label>
+            <Textarea
+              id="prompt"
+              value={customPrompts[selectedSubcategory] || ''}
+              onChange={(e) => handlePromptChange(selectedSubcategory, e.target.value)}
+              className="min-h-[120px] bg-white/60 backdrop-blur-sm border-gray-300"
+              placeholder="Enter custom prompt..."
+            />
+
+            {/* Update Button and Status Messages */}
+            <div className="mt-3 flex items-center gap-3">
               <Button
-                key={fashionStyle.id}
-                onClick={() => handleFashionTypeSelect(fashionStyle.id)}
-                disabled={loading}
-                variant={isSelected ? "default" : "outline"}
-                className={`p-6 h-auto flex flex-col items-center gap-2 transition-all duration-300 hover:scale-105 ${
-                  isSelected
-                    ? 'bg-black hover:bg-gray-800 text-white border-black'
-                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                }`}
+                onClick={() => handleUpdatePrompt(selectedSubcategory)}
+                disabled={updatingPrompt === selectedSubcategory}
+                variant="outline"
+                className="border-gray-300 hover:bg-gray-50 flex items-center gap-2"
               >
-                <IconComponent className="h-6 w-6" />
-                <span className="text-sm font-medium text-center">{fashionStyle.name}</span>
+                <Save className="h-4 w-4" />
+                {updatingPrompt === selectedSubcategory ? 'Updating...' : 'Update Prompt'}
               </Button>
-            );
-          })}
-        </div>
 
-        {/* Prompt Editor for Selected Fashion Type */}
-        <div className="mb-8 text-left">
-          <Label htmlFor="prompt" className="text-sm font-medium mb-2 block">
-            Prompt for {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name}
-          </Label>
-          <Textarea
-            id="prompt"
-            value={customPrompts[selectedFashionType]}
-            onChange={(e) => handlePromptChange(selectedFashionType, e.target.value)}
-            className="min-h-[120px] bg-white/60 backdrop-blur-sm border-gray-300"
-            placeholder="Enter custom prompt..."
-          />
-        </div>
+              {updateStatus.type === selectedSubcategory && updateStatus.status === 'success' && (
+                <span className="text-sm text-green-600 font-medium">
+                  Prompt updated successfully!
+                </span>
+              )}
+
+              {updateStatus.type === selectedSubcategory && updateStatus.status === 'error' && (
+                <span className="text-sm text-red-600 font-medium">
+                  Failed to update prompt. Please try again.
+                </span>
+              )}
+            </div>
+          </div>
+        )}
 
         <Button
-          onClick={() => fetchTrends(selectedFashionType)}
-          disabled={loading}
+          onClick={() => fetchTrends(selectedSubcategory!)}
+          disabled={loading || !selectedSubcategory}
           className="mb-8 px-8 py-6 text-lg font-medium bg-black hover:bg-gray-800 text-white"
         >
           Show Trends
@@ -175,7 +304,7 @@ export function AdminTrendsDisplay() {
         {loading && (
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
-            <p className="text-gray-600">Researching {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name} trends...</p>
+            <p className="text-gray-600">Researching {prompts.find(p => p.id === selectedSubcategory)?.name} trends...</p>
           </div>
         )}
       </div>
@@ -206,7 +335,7 @@ export function AdminTrendsDisplay() {
         <div className="space-y-16">
           <div className="text-center">
             <h2 className="font-serif text-3xl md:text-4xl text-gray-900 mb-4">
-              Latest {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name} Trends
+              Latest {prompts.find(p => p.id === selectedSubcategory)?.name} Trends
             </h2>
             <p className="text-gray-600 text-lg">
               Generated on {new Date(trends.request_info.generated_at).toLocaleDateString()}

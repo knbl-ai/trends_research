@@ -6,11 +6,11 @@ import remarkGfm from 'remark-gfm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendData } from '@/lib/types';
 
-interface TrendCardProps {
+interface MilitaryTrendCardProps {
   trend: TrendData;
 }
 
-export function TrendCard({ trend }: TrendCardProps) {
+export function MilitaryTrendCard({ trend }: MilitaryTrendCardProps) {
   return (
     <Card className="overflow-hidden border-0 shadow-lg hover-lift bg-white/80 backdrop-blur-sm animate-fade-in-up">
       <CardHeader className="pb-4">
@@ -61,40 +61,26 @@ export function TrendCard({ trend }: TrendCardProps) {
           </ReactMarkdown>
         </div>
 
-        {/* Images Grid */}
+        {/* Images Grid - Landscape 16:9 aspect ratio */}
         {trend.image_urls && trend.image_urls.length > 0 && (
           <div className="space-y-4">
             <h4 className="font-serif text-xl text-gray-900">Visual Inspiration</h4>
-            {trend.image_urls.length === 1 ? (
-              // Single horizontal image (16:9) for military
-              <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-100 hover:scale-[1.02] transition-transform duration-300">
-                <Image
-                  src={trend.image_urls[0]}
-                  alt={`Trend ${trend.number} - Image 1`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
-                />
-              </div>
-            ) : (
-              // Multiple vertical images (3:4) for fashion
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {trend.image_urls.map((imageUrl, index) => (
-                  <div
-                    key={index}
-                    className="relative aspect-[3/4] overflow-hidden rounded-lg bg-gray-100 hover:scale-105 transition-transform duration-300"
-                  >
-                    <Image
-                      src={imageUrl}
-                      alt={`Trend ${trend.number} - Image ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 gap-4">
+              {trend.image_urls.map((imageUrl, index) => (
+                <div
+                  key={index}
+                  className="relative aspect-video overflow-hidden rounded-lg bg-gray-100 hover:scale-[1.02] transition-transform duration-300"
+                >
+                  <Image
+                    src={imageUrl}
+                    alt={`Trend ${trend.number} - Image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

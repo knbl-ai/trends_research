@@ -1,49 +1,70 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
-import { TrendsApiResponse } from '@/lib/types';
-type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel';
-
-interface FashionStyleConfig {
-  id: FashionType;
-  name: string;
-}
-
-const FASHION_STYLES: FashionStyleConfig[] = [
-  { id: 'high-fashion', name: 'High Fashion' },
-  { id: 'street-fashion', name: 'Street Fashion' },
-  { id: 'casual', name: 'Casual' },
-  { id: 'social-media', name: 'Social Media' },
-  { id: 'celebrities', name: 'Celebrities' },
-  { id: 'israel', name: 'Israel' }
-];
-
-function getAllFashionTypes(): FashionStyleConfig[] {
-  return FASHION_STYLES;
-}
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink } from 'lucide-react';
+import { MilitaryTrendCard } from '@/components/MilitaryTrendCard';
+import { TrendsApiResponse, TrendCategory, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument } from '@/lib/types';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink, Shield, Zap, Crosshair, Truck, Lock, Globe } from 'lucide-react';
 import Link from 'next/link';
 
-export function TrendsDisplay() {
+interface TrendsDisplayProps {
+  category: TrendCategory;
+}
+
+export function TrendsDisplay({ category }: TrendsDisplayProps) {
   const [trends, setTrends] = useState<TrendsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFashionType, setSelectedFashionType] = useState<FashionType>('high-fashion');
+  const [prompts, setPrompts] = useState<(FashionPromptDocument | MilitaryPromptDocument)[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<SubcategoryType | null>(null);
+  const [promptsLoading, setPromptsLoading] = useState(true);
 
-  const fetchTrends = async (fashionType: FashionType = selectedFashionType) => {
+  // Fetch prompts on mount or category change
+  useEffect(() => {
+    const fetchPrompts = async () => {
+      setPromptsLoading(true);
+      try {
+        const response = await fetch(`/api/prompts?category=${category}`);
+        if (!response.ok) throw new Error('Failed to fetch prompts');
+
+        const data = await response.json();
+        if (data.success) {
+          setPrompts(data.data);
+          if (data.data.length > 0) {
+            setSelectedSubcategory(data.data[0].id);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch prompts:', err);
+        setError('Failed to load prompts');
+      } finally {
+        setPromptsLoading(false);
+      }
+    };
+
+    fetchPrompts();
+  }, [category]);
+
+  const fetchTrends = async (subcategory: SubcategoryType = selectedSubcategory!) => {
     setLoading(true);
     setError(null);
 
     try {
+      // Fashion gets 3 images (vertical), military gets 1 image (horizontal)
+      const numImages = category === 'fashion' ? 3 : 1;
+
       const response = await fetch('/api/trends', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fashionType }),
+        body: JSON.stringify({
+          subcategoryType: subcategory,
+          trendCategory: category,
+          num_images: numImages
+        }),
       });
 
       if (!response.ok) {
@@ -59,83 +80,111 @@ export function TrendsDisplay() {
     }
   };
 
-  const getFashionIcon = (type: FashionType) => {
-    switch (type) {
-      case 'high-fashion': return Sparkles;
-      case 'street-fashion': return Users;
-      case 'casual': return Shirt;
-      case 'social-media': return Heart;
-      case 'celebrities': return Star;
-      case 'israel': return Flag;
-      default: return TrendingUp;
-    }
+  const getIcon = (id: SubcategoryType) => {
+    const iconMap: Record<SubcategoryType, typeof TrendingUp> = {
+      // Fashion icons
+      'high-fashion': Sparkles,
+      'street-fashion': Users,
+      'casual': Shirt,
+      'social-media': Heart,
+      'celebrities': Star,
+      'israel': Flag,
+      // Military icons
+      'tactical-gear': Shield,
+      'uniforms': Users,
+      'weapons-systems': Crosshair,
+      'vehicles': Truck,
+      'cyber-defense': Lock,
+      'global-conflicts': Globe
+    };
+    return iconMap[id] || TrendingUp;
   };
 
-  const handleFashionTypeSelect = (type: FashionType) => {
-    setSelectedFashionType(type);
+  const handleSubcategorySelect = (id: SubcategoryType) => {
+    setSelectedSubcategory(id);
   };
 
-  const renderSkeletons = () => (
-    <div className="space-y-12">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="space-y-6 p-8 border rounded-lg bg-white/50">
-          <Skeleton className="h-8 w-32" />
-          <Skeleton className="h-24 w-full" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[1, 2, 3].map((j) => (
-              <Skeleton key={j} className="aspect-[3/4] w-full" />
-            ))}
+  const getCategoryTitle = () => {
+    return category === 'fashion' ? 'Fashion' : 'Military';
+  };
+
+  const renderSkeletons = () => {
+    const isFashion = category === 'fashion';
+
+    return (
+      <div className="space-y-12">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="space-y-6 p-8 border rounded-lg bg-white/50">
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-24 w-full" />
+            {isFashion ? (
+              // Fashion: 3 vertical images
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[1, 2, 3].map((j) => (
+                  <Skeleton key={j} className="aspect-[3/4] w-full" />
+                ))}
+              </div>
+            ) : (
+              // Military: 1 horizontal image
+              <Skeleton className="aspect-video w-full" />
+            )}
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
       {/* Header Section */}
       <div className="text-center mb-16 animate-fade-in-up">
         <h1 className="font-serif text-5xl md:text-7xl text-gray-900 mb-6 tracking-tight">
-          Fashion<br />
+          {getCategoryTitle()}<br />
           <span className="text-gradient">Trends Research</span>
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light leading-relaxed">
-          Discover the latest global fashion trends with AI-powered research.
-          Explore cutting-edge styles, colors, and inspirations shaping the future of fashion.
+          Discover the latest global {category} trends with AI-powered research.
+          Explore cutting-edge insights and developments shaping the future.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          {getAllFashionTypes().map((fashionStyle) => {
-            const IconComponent = getFashionIcon(fashionStyle.id);
-            const isSelected = selectedFashionType === fashionStyle.id;
+          {promptsLoading ? (
+            <div className="col-span-full text-center py-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
+            </div>
+          ) : (
+            prompts.map((prompt) => {
+              const IconComponent = getIcon(prompt.id);
+              const isSelected = selectedSubcategory === prompt.id;
 
-            return (
-              <Button
-                key={fashionStyle.id}
-                onClick={() => handleFashionTypeSelect(fashionStyle.id)}
-                disabled={loading}
-                variant={isSelected ? "default" : "outline"}
-                className={`p-6 h-auto flex flex-col items-center gap-2 transition-all duration-300 hover:scale-105 ${
-                  isSelected
-                    ? 'bg-black hover:bg-gray-800 text-white border-black'
-                    : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                }`}
-              >
-                <IconComponent className="h-6 w-6" />
-                <span className="text-sm font-medium text-center">{fashionStyle.name}</span>
-              </Button>
-            );
-          })}
+              return (
+                <Button
+                  key={prompt.id}
+                  onClick={() => handleSubcategorySelect(prompt.id)}
+                  disabled={loading}
+                  variant={isSelected ? "default" : "outline"}
+                  className={`p-6 h-auto flex flex-col items-center gap-2 transition-all duration-300 hover:scale-105 ${
+                    isSelected
+                      ? 'bg-black hover:bg-gray-800 text-white border-black'
+                      : 'border-gray-300 hover:bg-gray-50 text-gray-700'
+                  }`}
+                >
+                  <IconComponent className="h-6 w-6" />
+                  <span className="text-sm font-medium text-center">{prompt.name}</span>
+                </Button>
+              );
+            })
+          )}
         </div>
 
         <Button
-          onClick={() => fetchTrends(selectedFashionType)}
-          disabled={loading}
+          onClick={() => fetchTrends(selectedSubcategory!)}
+          disabled={loading || !selectedSubcategory}
           className="mb-8 px-8 py-6 text-lg font-medium bg-black hover:bg-gray-800 text-white"
         >
           Show Trends
@@ -144,7 +193,7 @@ export function TrendsDisplay() {
         {loading && (
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
-            <p className="text-gray-600">Researching {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name} trends...</p>
+            <p className="text-gray-600">Researching {prompts.find(p => p.id === selectedSubcategory)?.name} trends...</p>
           </div>
         )}
       </div>
@@ -175,7 +224,7 @@ export function TrendsDisplay() {
         <div className="space-y-16">
           <div className="text-center">
             <h2 className="font-serif text-3xl md:text-4xl text-gray-900 mb-4">
-              Latest {getAllFashionTypes().find(f => f.id === selectedFashionType)?.name} Trends
+              Latest {prompts.find(p => p.id === selectedSubcategory)?.name} Trends
             </h2>
             <p className="text-gray-600 text-lg">
               Generated on {new Date(trends.request_info.generated_at).toLocaleDateString()}
@@ -185,7 +234,11 @@ export function TrendsDisplay() {
           <div className="space-y-12">
             {trends.data.trends.map((trend, index) => (
               <div key={trend.number || index}>
-                <TrendCard trend={trend} />
+                {category === 'fashion' ? (
+                  <TrendCard trend={trend} />
+                ) : (
+                  <MilitaryTrendCard trend={trend} />
+                )}
               </div>
             ))}
           </div>

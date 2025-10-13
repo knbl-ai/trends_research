@@ -1,9 +1,9 @@
-import { TrendsDisplay } from '@/components/TrendsDisplay';
+import { CategorySelector } from '@/components/CategorySelector';
 
 export default function HomePage() {
   return (
     <main className="min-h-screen vogue-gradient">
-      <TrendsDisplay />
+      <CategorySelector />
     </main>
   );
 }
