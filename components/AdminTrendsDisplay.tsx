@@ -152,26 +152,26 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
 
       const data = await response.json();
       if (data.success) {
-        setUpdateStatus({ type, status: 'success' });
+        setUpdateStatus({ type: id, status: 'success' });
         // Update the prompts list with the new data
         setPrompts(prev => prev.map(p =>
-          p.id === type ? { ...p, prompt: customPrompts[type], updatedAt: new Date() } : p
+          p.id === id ? { ...p, prompt: customPrompts[id], updatedAt: new Date() } : p
         ));
 
         // Clear success message after 3 seconds
         setTimeout(() => {
-          setUpdateStatus(prev => prev.type === type ? { ...prev, status: null } : prev);
+          setUpdateStatus(prev => prev.type === id ? { ...prev, status: null } : prev);
         }, 3000);
       } else {
         throw new Error(data.error || 'Failed to update prompt');
       }
     } catch (err) {
       console.error('Failed to update prompt:', err);
-      setUpdateStatus({ type, status: 'error' });
+      setUpdateStatus({ type: id, status: 'error' });
 
       // Clear error message after 5 seconds
       setTimeout(() => {
-        setUpdateStatus(prev => prev.type === type ? { ...prev, status: null } : prev);
+        setUpdateStatus(prev => prev.type === id ? { ...prev, status: null } : prev);
       }, 5000);
     } finally {
       setUpdatingPrompt(null);
