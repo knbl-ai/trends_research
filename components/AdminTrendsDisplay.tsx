@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
+import { MilitaryTrendCard } from '@/components/MilitaryTrendCard';
 import { TrendsApiResponse, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument, TrendCategory } from '@/lib/types';
 import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink, Save, Shield, Zap, Crosshair, Truck, Lock, Globe } from 'lucide-react';
 import Link from 'next/link';
@@ -345,7 +346,11 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
           <div className="space-y-12">
             {trends.data.trends.map((trend, index) => (
               <div key={trend.number || index} className="space-y-4">
-                <TrendCard trend={trend} />
+                {category === 'fashion' ? (
+                  <TrendCard trend={trend} />
+                ) : (
+                  <MilitaryTrendCard trend={trend} />
+                )}
 
                 {/* Admin Prompt Display */}
                 <div className="p-4 bg-gray-100/60 backdrop-blur-sm rounded-lg border border-gray-300">
