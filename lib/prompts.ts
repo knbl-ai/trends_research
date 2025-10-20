@@ -1,4 +1,4 @@
-export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel';
+export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel' | 'wellness';
 
 export interface FashionStyleConfig {
   id: FashionType;
@@ -36,6 +36,11 @@ export const FASHION_PROMPTS: Record<FashionType, FashionStyleConfig> = {
     id: 'israel',
     name: 'Israel',
     prompt: "Research the top 3 most current Israeli fashion trends (2025-late) locally and regionally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in Tel Aviv fashion scene, Israeli designers, Middle Eastern influences, and local street style. Key sub-elements (colours, cuts, fabrics inspired by climate/culture, Israeli brands, regional accessories). How and why it has emerged (local culture, climate considerations, Middle Eastern influences, Israeli fashion week, local designers). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
+  },
+  'wellness': {
+    id: 'wellness',
+    name: 'Wellness',
+    prompt: "Research the top 3 most current wellness and yoga fashion trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in yoga studios, wellness spaces, mindful living, and elevated athleisure. Key sub-elements (colours, technical fabrics, sustainable materials, versatile designs that transition from practice to lifestyle, performance features, minimalist aesthetics). How and why it has emerged (wellness movement, mindfulness culture, work-life integration, sustainable fashion consciousness, performance-lifestyle crossover). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   }
 };
 
