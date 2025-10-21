@@ -1,4 +1,4 @@
-export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel';
+export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'wellness';
 
 export interface FashionStyleConfig {
   id: FashionType;
@@ -32,10 +32,10 @@ export const FASHION_PROMPTS: Record<FashionType, FashionStyleConfig> = {
     name: 'Celebrities',
     prompt: "Research the top 3 most current celebrity fashion trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in red carpet events, paparazzi photos, celebrity endorsements, and award shows. Key sub-elements (colours, cuts, designer brands, statement pieces, luxury accessories, celebrity styling). How and why it has emerged (celebrity influence, designer partnerships, media coverage, fan culture). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   },
-  'israel': {
-    id: 'israel',
-    name: 'Israel',
-    prompt: "Research the top 3 most current Israeli fashion trends (2025-late) locally and regionally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in Tel Aviv fashion scene, Israeli designers, Middle Eastern influences, and local street style. Key sub-elements (colours, cuts, fabrics inspired by climate/culture, Israeli brands, regional accessories). How and why it has emerged (local culture, climate considerations, Middle Eastern influences, Israeli fashion week, local designers). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
+  'wellness': {
+    id: 'wellness',
+    name: 'Wellness',
+    prompt: "Research the top 3 most current wellness fashion trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in activewear, mindful fashion, sustainable materials, and health-conscious clothing. Key sub-elements (colours, cuts, fabrics with wellness properties, breathable materials, eco-friendly brands, wellness accessories). How and why it has emerged (health consciousness, mindfulness movement, sustainability, holistic lifestyle, mental health awareness). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   }
 };
 
