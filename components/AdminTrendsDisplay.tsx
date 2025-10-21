@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
 import { MilitaryTrendCard } from '@/components/MilitaryTrendCard';
+import { SearchingAnimation } from '@/components/SearchingAnimation';
 import { TrendsApiResponse, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument, TrendCategory } from '@/lib/types';
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Flag, ExternalLink, Save, Shield, Zap, Crosshair, Truck, Lock, Globe } from 'lucide-react';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Save, Shield, Zap, Crosshair, Truck, Lock, Globe } from 'lucide-react';
 import Link from 'next/link';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -103,7 +104,7 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
       'casual': Shirt,
       'social-media': Heart,
       'celebrities': Star,
-      'israel': Flag,
+      'wellness': Leaf,
       // Military icons
       'tactical-gear': Shield,
       'uniforms': Users,
@@ -302,12 +303,7 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
           Show Trends
         </Button>
 
-        {loading && (
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
-            <p className="text-gray-600">Researching {prompts.find(p => p.id === selectedSubcategory)?.name} trends...</p>
-          </div>
-        )}
+        {loading && <SearchingAnimation />}
       </div>
 
       {/* Error State */}

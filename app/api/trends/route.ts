@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TrendsApiRequest, TrendsApiResponse, FashionType, MilitaryType, SubcategoryType, TrendCategory } from '@/lib/types';
 import { getPromptById } from '@/lib/models/prompt';
+import https from 'https';
+import fetch from 'node-fetch';
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,15 +63,28 @@ export async function POST(request: NextRequest) {
     }
 
 
+    // Create a custom HTTPS agent that accepts the certificate for socialmediaserveragent.xyz
+    // This is necessary because the domain may have certificate validation issues
+    const httpsAgent = new https.Agent({
+      rejectUnauthorized: false, // Accept self-signed or mismatched certificates for this API
+    });
+
     // Make the API request
-    const response = await fetch(apiEndpoint, {
+    const fetchOptions: any = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
       },
       body: JSON.stringify(trendsRequest),
-    });
+    };
+
+    // Only add HTTPS agent for HTTPS URLs
+    if (apiEndpoint.startsWith('https://')) {
+      fetchOptions.agent = httpsAgent;
+    }
+
+    const response = await fetch(apiEndpoint, fetchOptions);
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -35,7 +35,7 @@ export interface TrendsApiRequest {
 
 export type TrendCategory = 'fashion' | 'military';
 
-export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'israel';
+export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'wellness';
 
 export type MilitaryType = 'tactical-gear' | 'uniforms' | 'weapons-systems' | 'vehicles' | 'cyber-defense' | 'global-conflicts';
 
@@ -60,3 +60,16 @@ export interface MilitaryPromptDocument {
 }
 
 export type TrendPromptDocument = FashionPromptDocument | MilitaryPromptDocument;
+
+// User and Authentication Types
+export type UserRole = 'admin' | 'editor' | 'viewer';
+
+export interface UserDocument {
+  _id?: string;
+  email: string;
+  password: string; // hashed password
+  name: string;
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
+}
