@@ -1,31 +1,39 @@
-import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-// Force Node.js runtime instead of Edge runtime to support MongoDB
-export const runtime = 'nodejs';
-
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const isLoggedIn = !!req.auth;
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
   // Public paths that don't require authentication
   const isAuthPage = pathname.startsWith('/auth/login');
   const isApiAuthRoute = pathname.startsWith('/api/auth');
+  const isPublicAsset = pathname.startsWith('/_next') ||
+                        pathname.startsWith('/favicon.ico') ||
+                        pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/);
 
-  // If user is logged in and trying to access login page, redirect to home
-  if (isLoggedIn && isAuthPage) {
-    return NextResponse.redirect(new URL('/', req.url));
+  // Allow public paths
+  if (isAuthPage || isApiAuthRoute || isPublicAsset) {
+    return NextResponse.next();
   }
 
-  // If user is not logged in and trying to access protected pages, redirect to login
-  if (!isLoggedIn && !isAuthPage && !isApiAuthRoute) {
-    const loginUrl = new URL('/auth/login', req.url);
+  // Check if user has session cookie (basic check for Edge runtime)
+  const sessionCookie = request.cookies.get('authjs.session-token') ||
+                        request.cookies.get('__Secure-authjs.session-token');
+
+  // If no session cookie and not on auth page, redirect to login
+  if (!sessionCookie) {
+    const loginUrl = new URL('/auth/login', request.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
+  // If has session cookie and trying to access login page, redirect to home
+  if (sessionCookie && isAuthPage) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [
