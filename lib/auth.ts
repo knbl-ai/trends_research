@@ -4,26 +4,22 @@ import { compare } from 'bcryptjs';
 import { getDatabase } from './mongodb';
 import { UserDocument, UserRole } from './types';
 
-// Extend the built-in session type to include role
+// Extend NextAuth types
 declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
-      email: string;
-      name: string;
       role: UserRole;
     } & DefaultSession['user'];
   }
 
   interface User {
     id: string;
-    email: string;
-    name: string;
     role: UserRole;
   }
 }
 
-declare module 'next-auth/jwt' {
+declare module '@auth/core/jwt' {
   interface JWT {
     id: string;
     role: UserRole;
