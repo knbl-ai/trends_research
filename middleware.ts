@@ -7,12 +7,13 @@ export function middleware(request: NextRequest) {
   // Public paths that don't require authentication
   const isAuthPage = pathname.startsWith('/auth/login');
   const isApiAuthRoute = pathname.startsWith('/api/auth');
+  const isNewsletterRoute = pathname.startsWith('/api/newsletter');
   const isPublicAsset = pathname.startsWith('/_next') ||
                         pathname.startsWith('/favicon.ico') ||
                         pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/);
 
   // Allow public paths
-  if (isAuthPage || isApiAuthRoute || isPublicAsset) {
+  if (isAuthPage || isApiAuthRoute || isNewsletterRoute || isPublicAsset) {
     return NextResponse.next();
   }
 
