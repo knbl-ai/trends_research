@@ -38,3 +38,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# newsletter recipients (contains private email addresses)
+config/newsletter-recipients.json
