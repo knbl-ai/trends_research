@@ -99,12 +99,12 @@ export async function POST(request: NextRequest) {
     console.log(`Sending test email to: ${testEmail}`);
 
     const result = await gmailService.sendEmail(
-      'ai@kanibal.co.il',
+      undefined, // fromUser - uses EMAIL_FROM_ADDRESS from env
       testEmail,
       `[TEST] Weekly Fashion Trends - ${promptDoc.name}`,
       emailHTML,
       true,
-      'Kanibal Fashion Trends'
+      undefined // senderName - uses EMAIL_SENDER_NAME from env
     );
 
     console.log('Test newsletter sent successfully');

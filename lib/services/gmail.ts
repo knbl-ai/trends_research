@@ -29,12 +29,12 @@ class GmailService {
   }
 
   async sendEmail(
-    fromUser: string = 'ai@kanibal.co.il',
+    fromUser: string = process.env.EMAIL_FROM_ADDRESS || 'noreply@example.com',
     toEmail: string,
     subject: string,
     body: string,
     isHtml: boolean = false,
-    senderName: string = 'Kanibal Fashion Trends'
+    senderName: string = process.env.EMAIL_SENDER_NAME || 'Newsletter'
   ) {
     try {
       await this.initialize();
@@ -80,12 +80,12 @@ class GmailService {
   }
 
   async sendBulkEmails(
-    fromUser: string = 'ai@kanibal.co.il',
+    fromUser: string = process.env.EMAIL_FROM_ADDRESS || 'noreply@example.com',
     toEmails: string[],
     subject: string,
     body: string,
     isHtml: boolean = false,
-    senderName: string = 'Kanibal Fashion Trends'
+    senderName: string = process.env.EMAIL_SENDER_NAME || 'Newsletter'
   ) {
     const results = [];
 
@@ -117,12 +117,12 @@ class GmailService {
    * @returns Array of send results with detailed information
    */
   async sendBulkEmailsWithInterval(
-    fromUser: string = 'ai@kanibal.co.il',
+    fromUser: string = process.env.EMAIL_FROM_ADDRESS || 'noreply@example.com',
     toEmails: string[],
     subject: string,
     body: string,
     isHtml: boolean = false,
-    senderName: string = 'Kanibal Fashion Trends',
+    senderName: string = process.env.EMAIL_SENDER_NAME || 'Newsletter',
     intervalSeconds: number = 45
   ) {
     const results = [];

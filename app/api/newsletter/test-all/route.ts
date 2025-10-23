@@ -121,13 +121,14 @@ export async function POST(request: NextRequest) {
     console.log(`Sending test emails to ${recipients.length} recipients with ${intervalSeconds}s intervals...`);
 
     // Send emails with intervals to avoid spam detection
+    // Using default sender info from environment variables
     const emailResults = await gmailService.sendBulkEmailsWithInterval(
-      'ai@kanibal.co.il',
+      undefined, // fromUser - uses EMAIL_FROM_ADDRESS from env
       recipients,
       `[TEST] Weekly Fashion Trends - ${promptDoc.name}`,
       emailHTML,
       true,
-      'Kanibal Fashion Trends',
+      undefined, // senderName - uses EMAIL_SENDER_NAME from env
       intervalSeconds
     );
 
