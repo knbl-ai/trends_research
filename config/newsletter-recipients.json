@@ -1,0 +1,44 @@
+{
+  "recipients": [
+    {
+      "email": "vladi@kanibal.co.il",
+      "name": "Vladi",
+      "active": true,
+      "addedAt": "2025-10-23"
+    },
+    {
+      "email": "ravit@kanibal.co.il",
+      "name": "Ravit",
+      "active": true,
+      "addedAt": "2025-10-23"
+    },
+    {
+      "email": "raz@kanibal.co.il",
+      "name": "Raz",
+      "active": true,
+      "addedAt": "2025-10-23"
+    },
+    {
+      "email": "daniela@kanibal.co.il",
+      "name": "Daniela",
+      "active": true,
+      "addedAt": "2025-10-23"
+    },
+    {
+      "email": "yossi_m@h-o.co.il",
+      "name": "Yossi M",
+      "active": true,
+      "addedAt": "2025-11-02"
+    },
+    {
+      "email": "adi_b@h-o.co.il",
+      "name": "Adi B",
+      "active": true,
+      "addedAt": "2025-11-02"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2025-11-02",
+    "description": "Newsletter recipients list for weekly fashion trends emails"
+  }
+}
