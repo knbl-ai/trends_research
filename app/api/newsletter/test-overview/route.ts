@@ -4,47 +4,14 @@ import gmailService from '@/lib/services/gmail';
 import { generateNewsletterOverviewHTML } from '@/lib/templates/newsletter-overview-email';
 import https from 'https';
 import fetch from 'node-fetch';
-import fs from 'fs';
-import path from 'path';
-
-// Load recipients from JSON file
-function getNewsletterRecipients() {
-  try {
-    const recipientsPath = path.join(process.cwd(), 'config', 'newsletter-recipients.json');
-    const recipientsData = fs.readFileSync(recipientsPath, 'utf-8');
-    const data = JSON.parse(recipientsData);
-
-    // Filter only active recipients
-    return data.recipients
-      .filter((recipient: any) => recipient.active)
-      .map((recipient: any) => recipient.email);
-  } catch (error) {
-    console.error('Failed to load recipients from JSON:', error);
-    // Fallback to hardcoded recipients
-    return [
-      'vladi@kanibal.co.il',
-      'ravit@kanibal.co.il',
-      'raz@kanibal.co.il',
-      'daniela@kanibal.co.il'
-    ];
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify this is being called by Vercel Cron or contains the correct authorization
-    const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET;
+    // Parse request body to get test email (no auth required for test endpoint)
+    const body = await request.json();
+    const testEmail = body.email || 'vladi@kanibal.co.il';
 
-    // Allow requests from Vercel Cron or with the correct secret
-    if (authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    console.log('Starting weekly newsletter send...');
+    console.log(`Sending test newsletter overview to: ${testEmail}`);
 
     // Prepare trends overview request with Hebrew language
     const trendsRequest: TrendsOverviewRequest = {
@@ -112,53 +79,38 @@ export async function POST(request: NextRequest) {
       language: data.request_info.language
     });
 
-    // Get recipients from JSON file
-    const recipients = getNewsletterRecipients();
-    console.log(`Sending newsletter to ${recipients.length} recipients...`);
+    // Send test email
+    console.log(`Sending test email to: ${testEmail}`);
 
-    // Get email send interval from environment or use default (45 seconds)
-    const intervalSeconds = parseInt(process.env.EMAIL_SEND_INTERVAL_SECONDS || '45', 10);
-
-    // Send emails with intervals to avoid spam detection
-    // Using default sender info from environment variables
-    const emailResults = await gmailService.sendBulkEmailsWithInterval(
+    const result = await gmailService.sendEmail(
       undefined, // fromUser - uses EMAIL_FROM_ADDRESS from env
-      recipients,
-      'Weekly Fashion Trends Overview',
+      testEmail,
+      '[TEST] Weekly Fashion Trends Overview',
       emailHTML,
       true,
-      undefined, // senderName - uses EMAIL_SENDER_NAME from env
-      intervalSeconds
+      undefined // senderName - uses EMAIL_SENDER_NAME from env
     );
 
-    // Log results
-    const successful = emailResults.filter(r => r.success).length;
-    const failed = emailResults.filter(r => !r.success).length;
-
-    console.log(`Newsletter send complete: ${successful} successful, ${failed} failed`);
+    console.log('Test newsletter sent successfully');
 
     return NextResponse.json({
       success: true,
-      message: 'Newsletter sent successfully',
-      results: {
-        total: emailResults.length,
-        successful,
-        failed,
-        details: emailResults
-      },
+      message: `Test newsletter sent successfully to ${testEmail}`,
+      result,
       trends: {
         categoriesCount: data.data.categories.length,
         generatedAt: data.request_info.generated_at,
-        language: data.request_info.language
+        language: data.request_info.language,
+        categories: data.data.categories.map(c => c.category_name)
       }
     });
 
   } catch (error) {
-    console.error('Newsletter send error:', error);
+    console.error('Test newsletter send error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to send newsletter',
+        error: 'Failed to send test newsletter',
         details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }

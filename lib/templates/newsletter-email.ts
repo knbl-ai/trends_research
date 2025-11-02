@@ -149,7 +149,12 @@ export function generateNewsletterHTML(data: NewsletterTemplateData): string {
 /**
  * Convert markdown text to basic HTML for email
  */
-function formatMarkdownToHTML(markdown: string): string {
+function formatMarkdownToHTML(markdown: string | undefined | null): string {
+  // Handle undefined or null input
+  if (!markdown) {
+    return '';
+  }
+
   let html = markdown;
 
   // Convert headers
