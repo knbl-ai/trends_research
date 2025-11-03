@@ -32,14 +32,13 @@ function getNewsletterRecipients() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify this is being called by Vercel Cron or contains the correct authorization
-    const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET;
+    // Verify this is being called by Vercel Cron
+    const userAgent = request.headers.get('user-agent') || '';
+    const isVercelCron = userAgent.includes('vercel-cron');
 
-    // Allow requests from Vercel Cron or with the correct secret
-    if (authHeader !== `Bearer ${cronSecret}`) {
+    if (!isVercelCron) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - This endpoint can only be triggered by Vercel Cron' },
         { status: 401 }
       );
     }
