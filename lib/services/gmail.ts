@@ -9,7 +9,17 @@ class GmailService {
       return;
     }
 
-    const privateKey = process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    // Handle private key with proper newline formatting
+    // Support both: literal \n strings and actual newlines
+    let privateKey = process.env.GOOGLE_CLOUD_PRIVATE_KEY || '';
+
+    // If the key contains literal \n strings (as text), replace them with actual newlines
+    if (privateKey.includes('\\n')) {
+      privateKey = privateKey.replace(/\\n/g, '\n');
+    }
+
+    // Ensure the key is properly trimmed
+    privateKey = privateKey.trim();
 
     if (!privateKey || !process.env.GOOGLE_CLOUD_CLIENT_EMAIL || !process.env.GOOGLE_CLOUD_PROJECT_ID) {
       throw new Error('Missing required Google Cloud credentials: GOOGLE_CLOUD_PRIVATE_KEY, GOOGLE_CLOUD_CLIENT_EMAIL, and GOOGLE_CLOUD_PROJECT_ID');
