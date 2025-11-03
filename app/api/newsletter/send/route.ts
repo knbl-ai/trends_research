@@ -30,7 +30,8 @@ function getNewsletterRecipients() {
   }
 }
 
-export async function POST(request: NextRequest) {
+// Shared handler for both GET (Vercel Cron) and POST (manual trigger)
+async function handleNewsletterSend(request: NextRequest) {
   try {
     // Verify this is being called by Vercel Cron OR manual trigger with secret
     const userAgent = request.headers.get('user-agent') || '';
@@ -170,4 +171,14 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// GET handler for Vercel Cron (Vercel Cron uses GET by default)
+export async function GET(request: NextRequest) {
+  return handleNewsletterSend(request);
+}
+
+// POST handler for manual triggers with Authorization header
+export async function POST(request: NextRequest) {
+  return handleNewsletterSend(request);
 }
