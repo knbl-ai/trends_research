@@ -32,16 +32,23 @@ function getNewsletterRecipients() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify this is being called by Vercel Cron
+    // Verify this is being called by Vercel Cron OR manual trigger with secret
     const userAgent = request.headers.get('user-agent') || '';
-    const isVercelCron = userAgent.includes('vercel-cron');
+    const authHeader = request.headers.get('authorization') || '';
+    const cronSecret = process.env.CRON_SECRET;
 
-    if (!isVercelCron) {
+    const isVercelCron = userAgent.includes('vercel-cron');
+    const isManualTrigger = cronSecret && authHeader === `Bearer ${cronSecret}`;
+
+    if (!isVercelCron && !isManualTrigger) {
+      console.error('Unauthorized request - not from Vercel Cron or valid manual trigger');
       return NextResponse.json(
-        { error: 'Unauthorized - This endpoint can only be triggered by Vercel Cron' },
+        { error: 'Unauthorized - Must be triggered by Vercel Cron or with valid authorization' },
         { status: 401 }
       );
     }
+
+    console.log(`Newsletter triggered by: ${isVercelCron ? 'Vercel Cron' : 'Manual trigger'}`);
 
     console.log('Starting weekly newsletter send...');
 
