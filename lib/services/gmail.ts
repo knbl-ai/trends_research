@@ -18,18 +18,20 @@ class GmailService {
       privateKey = privateKey.replace(/\\n/g, '\n');
     }
 
-    // Ensure the key is properly trimmed
+    // Trim all credentials to remove any trailing whitespace or newlines
     privateKey = privateKey.trim();
+    const clientEmail = (process.env.GOOGLE_CLOUD_CLIENT_EMAIL || '').trim();
+    const projectId = (process.env.GOOGLE_CLOUD_PROJECT_ID || '').trim();
 
-    if (!privateKey || !process.env.GOOGLE_CLOUD_CLIENT_EMAIL || !process.env.GOOGLE_CLOUD_PROJECT_ID) {
+    if (!privateKey || !clientEmail || !projectId) {
       throw new Error('Missing required Google Cloud credentials: GOOGLE_CLOUD_PRIVATE_KEY, GOOGLE_CLOUD_CLIENT_EMAIL, and GOOGLE_CLOUD_PROJECT_ID');
     }
 
     this.auth = new google.auth.GoogleAuth({
       credentials: {
-        client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
+        client_email: clientEmail,
         private_key: privateKey,
-        project_id: process.env.GOOGLE_CLOUD_PROJECT_ID
+        project_id: projectId
       },
       scopes: ['https://www.googleapis.com/auth/gmail.send'],
     });
@@ -39,15 +41,20 @@ class GmailService {
   }
 
   async sendEmail(
-    fromUser: string = process.env.EMAIL_FROM_ADDRESS || 'noreply@example.com',
+    fromUser: string = (process.env.EMAIL_FROM_ADDRESS || 'noreply@example.com').trim(),
     toEmail: string,
     subject: string,
     body: string,
     isHtml: boolean = false,
-    senderName: string = process.env.EMAIL_SENDER_NAME || 'Newsletter'
+    senderName: string = (process.env.EMAIL_SENDER_NAME || 'Newsletter').trim()
   ) {
     try {
       await this.initialize();
+
+      // Trim parameters in case they have trailing whitespace
+      fromUser = fromUser.trim();
+      senderName = senderName.trim();
+      toEmail = toEmail.trim();
 
       const authClient = await this.auth.getClient();
       authClient.subject = fromUser;
