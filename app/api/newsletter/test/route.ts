@@ -31,7 +31,10 @@ export async function POST(request: NextRequest) {
       type: "reasoning",
       prompt: promptDoc.prompt,
       images_num: 3,
-      trend_category: trendCategory
+      trend_category: trendCategory,
+      aspect_ratio: trendCategory === 'fashion' ? '3:4' : '16:9',
+      language: "English",
+      production: true
     };
 
     // Get the API endpoint and key from environment variables
