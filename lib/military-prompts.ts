@@ -1,4 +1,4 @@
-export type MilitaryType = 'tactical-gear' | 'uniforms' | 'weapons-systems' | 'vehicles' | 'cyber-defense' | 'global-conflicts';
+export type MilitaryType = 'air-sea-land' | 'counterterrorism-intelligence' | 'operational-innovation' | 'drones' | 'employer-branding';
 
 export interface MilitaryStyleConfig {
   id: MilitaryType;
@@ -7,35 +7,30 @@ export interface MilitaryStyleConfig {
 }
 
 export const MILITARY_PROMPTS: Record<MilitaryType, MilitaryStyleConfig> = {
-  'tactical-gear': {
-    id: 'tactical-gear',
-    name: 'Tactical Gear',
-    prompt: "Research the top 3 most current tactical gear trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in military operations, special forces equipment, and combat readiness. Key sub-elements (body armor, tactical vests, night vision, communication systems, modular gear). How and why it has emerged (technological advancements, operational requirements, soldier safety priorities). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
+  'air-sea-land': {
+    id: 'air-sea-land',
+    name: 'Air, Sea, and Land',
+    prompt: "Research the top 3 most current multi-domain military operations trends (2025-late) globally across air, sea, and land forces. For each trend, provide: A detailed description of what the trend is, including how it's showing up in naval operations, air superiority missions, ground force deployments, and joint operations. Key sub-elements (naval fleet modernization, fighter aircraft capabilities, amphibious operations, cross-domain coordination, integrated command systems). How and why it has emerged (multi-domain warfare requirements, strategic mobility needs, joint force integration, technological convergence). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   },
-  'uniforms': {
-    id: 'uniforms',
-    name: 'Military Uniforms',
-    prompt: "Research the top 3 most current military uniform trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in armed forces worldwide, camouflage patterns, and uniform technologies. Key sub-elements (digital camo patterns, adaptive materials, climate-specific designs, rank insignia innovations). How and why it has emerged (concealment technology, comfort requirements, multi-environment operations). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
+  'counterterrorism-intelligence': {
+    id: 'counterterrorism-intelligence',
+    name: 'Counter-terrorism and Intelligence',
+    prompt: "Research the top 3 most current counter-terrorism and intelligence trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in special operations, intelligence gathering, surveillance systems, and security operations. Key sub-elements (intelligence fusion centers, biometric identification, signals intelligence, human intelligence, counter-insurgency tactics, threat assessment technologies). How and why it has emerged (evolving terrorist threats, intelligence sharing needs, advanced surveillance capabilities, national security priorities). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   },
-  'weapons-systems': {
-    id: 'weapons-systems',
-    name: 'Weapons Systems',
-    prompt: "Research the top 3 most current weapons systems trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in military arsenals, small arms development, and emerging technologies. Key sub-elements (precision systems, smart ammunition, modular platforms, non-lethal options, autonomous capabilities). How and why it has emerged (accuracy requirements, battlefield adaptability, technological innovation). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
+  'operational-innovation': {
+    id: 'operational-innovation',
+    name: 'Operational Innovation & High-Tech',
+    prompt: "Research the top 3 most current operational innovation and high-tech military trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in military operations, emerging technologies, and next-generation warfare systems. Key sub-elements (artificial intelligence integration, quantum computing applications, directed energy weapons, hypersonic systems, autonomous platforms, augmented reality for operations, advanced materials). How and why it has emerged (technological breakthroughs, competitive advantages, operational efficiency demands, future warfare preparation). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   },
-  'vehicles': {
-    id: 'vehicles',
-    name: 'Military Vehicles',
-    prompt: "Research the top 3 most current military vehicle trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in ground forces, air forces, and naval operations. Key sub-elements (armored vehicles, aircraft, naval vessels, unmanned systems, electric/hybrid propulsion). How and why it has emerged (mobility needs, force protection, environmental considerations, automation). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
+  'drones': {
+    id: 'drones',
+    name: 'Drones',
+    prompt: "Research the top 3 most current drone and unmanned systems trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in military operations, UAV/UAS deployments, and autonomous aerial systems. Key sub-elements (combat drones, reconnaissance UAVs, drone swarms, counter-drone systems, autonomous navigation, payload capabilities, long-endurance platforms). How and why it has emerged (unmanned warfare advantages, surveillance requirements, precision strike capabilities, reduced personnel risk, cost-effectiveness). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   },
-  'cyber-defense': {
-    id: 'cyber-defense',
-    name: 'Cyber Defense',
-    prompt: "Research the top 3 most current cyber defense trends (2025-late) globally. For each trend, provide: A detailed description of what the trend is, including how it's showing up in military networks, information warfare, and digital security. Key sub-elements (AI-powered defense, quantum encryption, threat detection, offensive capabilities, critical infrastructure protection). How and why it has emerged (cyber threats evolution, digital warfare prominence, national security priorities). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
-  },
-  'global-conflicts': {
-    id: 'global-conflicts',
-    name: 'Global Conflicts',
-    prompt: "Research the top 3 most significant global military conflict trends (2025-late) worldwide. For each trend, provide: A detailed description of what the trend is, including current military operations, geopolitical tensions, and evolving warfare strategies. Key sub-elements (conflict regions, military doctrines, alliance dynamics, hybrid warfare, proxy conflicts). How and why it has emerged (geopolitical factors, regional instability, strategic interests, power dynamics). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
+  'employer-branding': {
+    id: 'employer-branding',
+    name: 'Employer Branding in Global Defense Companies',
+    prompt: "Research the top 3 most current employer branding trends (2025-late) in global defense companies and military contractors. For each trend, provide: A detailed description of what the trend is, including how it's showing up in recruitment strategies, talent acquisition, corporate culture initiatives, and defense industry marketing. Key sub-elements (veteran recruitment programs, STEM talent attraction, diversity initiatives, innovation culture promotion, competitive benefits, career development pathways, corporate social responsibility). How and why it has emerged (talent competition, workforce demographics shifts, skills shortages, generational expectations, industry image transformation). Links to web sources where information was taken from. Output should be a numbered list (1,2,3), one trend per number."
   }
 };
 

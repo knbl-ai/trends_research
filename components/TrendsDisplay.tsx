@@ -7,7 +7,7 @@ import { TrendCard } from '@/components/TrendCard';
 import { MilitaryTrendCard } from '@/components/MilitaryTrendCard';
 import { SearchingAnimation } from '@/components/SearchingAnimation';
 import { TrendsApiResponse, TrendCategory, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument } from '@/lib/types';
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Shield, Zap, Crosshair, Truck, Lock, Globe } from 'lucide-react';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Shield, Zap, Ship, Radio, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 
 interface TrendsDisplayProps {
@@ -91,12 +91,11 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
       'celebrities': Star,
       'wellness': Leaf,
       // Military icons
-      'tactical-gear': Shield,
-      'uniforms': Users,
-      'weapons-systems': Crosshair,
-      'vehicles': Truck,
-      'cyber-defense': Lock,
-      'global-conflicts': Globe
+      'air-sea-land': Ship,
+      'counterterrorism-intelligence': Shield,
+      'operational-innovation': Zap,
+      'drones': Radio,
+      'employer-branding': Briefcase
     };
     return iconMap[id] || TrendingUp;
   };
@@ -153,7 +152,11 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
           Explore cutting-edge insights and developments shaping the future.
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+        <div className={`grid gap-4 mb-8 ${
+          category === 'military'
+            ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5'
+            : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'
+        }`}>
           {promptsLoading ? (
             <div className="col-span-full text-center py-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
@@ -169,14 +172,14 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
                   onClick={() => handleSubcategorySelect(prompt.id)}
                   disabled={loading}
                   variant={isSelected ? "default" : "outline"}
-                  className={`p-6 h-auto flex flex-col items-center gap-2 transition-all duration-300 hover:scale-105 ${
+                  className={`p-6 h-auto min-h-[120px] flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:scale-105 ${
                     isSelected
                       ? 'bg-black hover:bg-gray-800 text-white border-black'
                       : 'border-gray-300 hover:bg-gray-50 text-gray-700'
                   }`}
                 >
-                  <IconComponent className="h-6 w-6" />
-                  <span className="text-sm font-medium text-center">{prompt.name}</span>
+                  <IconComponent className="h-6 w-6 flex-shrink-0" />
+                  <span className="text-sm font-medium text-center whitespace-normal break-words leading-tight">{prompt.name}</span>
                 </Button>
               );
             })
@@ -252,7 +255,7 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
                     Sources & References
                   </h3>
                   <p className="text-gray-600 text-lg">
-                    All sources used to research these fashion trends
+                    All sources used to research these trends
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

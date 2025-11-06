@@ -41,7 +41,10 @@ export async function POST(request: NextRequest) {
       type: "reasoning",
       prompt: prompt,
       images_num: numImages,
-      trend_category: trendCategory
+      trend_category: trendCategory,
+      aspect_ratio: trendCategory === 'fashion' ? '3:4' : '16:9',
+      language: "English",
+      production: true
     };
 
     // Get the API endpoint and key from environment variables
@@ -94,26 +97,58 @@ export async function POST(request: NextRequest) {
 
     const responseText = await response.text();
 
-    let data: TrendsApiResponse;
+    // Parse the external API response
+    let externalApiResponse: any;
     try {
-      data = JSON.parse(responseText);
+      externalApiResponse = JSON.parse(responseText);
     } catch (parseError) {
       console.error('Failed to parse JSON response:', parseError);
       console.error('Response was:', responseText.substring(0, 1000));
       throw new Error('API returned invalid JSON response');
     }
 
+    // Transform external API response to match our TrendsApiResponse type
+    // Handle both nested structure (data.trends) and flat structure (trends)
+    const trendsArray = externalApiResponse.data?.trends || externalApiResponse.trends || [];
+
+    const data: TrendsApiResponse = {
+      success: externalApiResponse.success || true,
+      message: 'Trends fetched successfully',
+      data: {
+        type: trendsRequest.type,
+        total_trends: externalApiResponse.data?.total_trends || externalApiResponse.total_trends || trendsArray.length || 0,
+        research_model: externalApiResponse.data?.research_model || externalApiResponse.metadata?.model || 'claude-sonnet',
+        trends: trendsArray.map((trend: any, index: number) => ({
+          number: index + 1,
+          description: trend.description_english || trend.description || '',
+          references: trend.references || [],
+          image_prompts: trend.image_prompts || [],
+          image_urls: trend.image_urls || trend.images?.map((img: any) => img.url) || [],
+          images_count: trend.image_urls?.length || trend.images?.length || 0
+        }))
+      },
+      request_info: {
+        search_type: trendsRequest.type,
+        trend_category: trendsRequest.trend_category || 'fashion',
+        search_prompt: trendsRequest.prompt,
+        images_per_trend: trendsRequest.images_num,
+        generated_at: externalApiResponse.request_info?.generated_at || externalApiResponse.metadata?.generated_at || new Date().toISOString()
+      }
+    };
+
     // Get the last 3 trends (which contain the most detailed descriptions)
     const top3Trends = data.data.trends.slice(-3);
 
-    return NextResponse.json({
+    const finalResponse = {
       ...data,
       data: {
         ...data.data,
         trends: top3Trends,
         total_trends: 3
       }
-    });
+    };
+
+    return NextResponse.json(finalResponse);
 
   } catch (error) {
     console.error('Trends API Error:', error);

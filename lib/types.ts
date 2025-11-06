@@ -31,13 +31,15 @@ export interface TrendsApiRequest {
   images_num: number;
   trend_category?: 'fashion' | 'military';
   aspect_ratio?: '3:4' | '16:9';
+  language: string;
+  production: boolean;
 }
 
 export type TrendCategory = 'fashion' | 'military';
 
 export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'wellness';
 
-export type MilitaryType = 'tactical-gear' | 'uniforms' | 'weapons-systems' | 'vehicles' | 'cyber-defense' | 'global-conflicts';
+export type MilitaryType = 'air-sea-land' | 'counterterrorism-intelligence' | 'operational-innovation' | 'drones' | 'employer-branding';
 
 export type SubcategoryType = FashionType | MilitaryType;
 

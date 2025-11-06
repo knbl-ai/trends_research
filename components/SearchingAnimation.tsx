@@ -28,7 +28,7 @@ export function SearchingAnimation() {
       {/* Animated text */}
       <div className="space-y-2">
         <h3 className="font-serif text-2xl md:text-3xl text-gray-900 animate-fade-in">
-          Searching Trends
+          Searching Latest Trends
         </h3>
 
         {/* Animated dots */}
@@ -40,7 +40,7 @@ export function SearchingAnimation() {
 
         {/* Subtitle */}
         <p className="text-gray-600 text-sm font-light animate-pulse">
-          Analyzing global fashion insights...
+          Analyzing global insights...
         </p>
       </div>
 
