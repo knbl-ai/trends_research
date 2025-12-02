@@ -52,10 +52,10 @@ export function CategorySelector() {
               </div>
               <div>
                 <h2 className="font-serif text-4xl text-gray-900 mb-3 group-hover:text-black transition-colors">
-                  Military
+                  Rafael Trends Research
                 </h2>
                 <p className="text-gray-600 text-lg font-light leading-relaxed">
-                  Discover emerging military trends, technologies, and global defense developments
+                  Global defense systems
                 </p>
               </div>
               <Button
