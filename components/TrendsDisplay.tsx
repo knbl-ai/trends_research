@@ -105,7 +105,13 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
   };
 
   const getCategoryTitle = () => {
-    return category === 'fashion' ? 'Fashion' : 'Military';
+    return category === 'fashion' ? 'Fashion' : 'Rafael Trends';
+  };
+
+  const getCategorySubtitle = () => {
+    return category === 'fashion'
+      ? 'Discover the latest global fashion trends with AI-powered research. Explore cutting-edge insights and developments shaping the future.'
+      : 'Global defense systems';
   };
 
   const renderSkeletons = () => {
@@ -144,12 +150,17 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
       {/* Header Section */}
       <div className="text-center mb-16 animate-fade-in-up">
         <h1 className="font-serif text-5xl md:text-7xl text-gray-900 mb-6 tracking-tight">
-          {getCategoryTitle()}<br />
-          <span className="text-gradient">Trends Research</span>
+          {category === 'fashion' ? (
+            <>
+              {getCategoryTitle()}<br />
+              <span className="text-gradient">Trends Research</span>
+            </>
+          ) : (
+            <span className="text-gradient">{getCategoryTitle()} Research</span>
+          )}
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light leading-relaxed">
-          Discover the latest global {category} trends with AI-powered research.
-          Explore cutting-edge insights and developments shaping the future.
+          {getCategorySubtitle()}
         </p>
 
         <div className={`grid gap-4 mb-8 ${
