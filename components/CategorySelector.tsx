@@ -1,7 +1,7 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { Sparkles, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function CategorySelector() {
@@ -22,15 +22,17 @@ export function CategorySelector() {
         <Link href="/fashion" className="group">
           <div className="relative overflow-hidden rounded-2xl border-2 border-gray-200 bg-white/60 backdrop-blur-sm hover:bg-white hover:border-black transition-all duration-300 hover:shadow-2xl hover:scale-105 p-12">
             <div className="flex flex-col items-center text-center space-y-6">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-900 to-gray-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="h-12 w-12 text-white" />
-              </div>
+              <Image
+                src="/hO.png"
+                alt="Fashion Logo"
+                width={200}
+                height={100}
+                priority
+                className="h-24 w-auto group-hover:scale-110 transition-transform duration-300"
+              />
               <div>
-                <h2 className="font-serif text-4xl text-gray-900 mb-3 group-hover:text-black transition-colors">
-                  Fashion
-                </h2>
                 <p className="text-gray-600 text-lg font-light leading-relaxed">
-                  Explore the latest global fashion trends, styles, and inspirations shaping the industry
+                  Trends Research. Global Fashion and Style
                 </p>
               </div>
               <Button
@@ -47,15 +49,17 @@ export function CategorySelector() {
         <Link href="/military" className="group">
           <div className="relative overflow-hidden rounded-2xl border-2 border-gray-200 bg-white/60 backdrop-blur-sm hover:bg-white hover:border-black transition-all duration-300 hover:shadow-2xl hover:scale-105 p-12">
             <div className="flex flex-col items-center text-center space-y-6">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-900 to-gray-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <Shield className="h-12 w-12 text-white" />
-              </div>
+              <Image
+                src="/Rafael.png"
+                alt="Rafael Logo"
+                width={200}
+                height={100}
+                priority
+                className="h-24 w-auto group-hover:scale-110 transition-transform duration-300"
+              />
               <div>
-                <h2 className="font-serif text-4xl text-gray-900 mb-3 group-hover:text-black transition-colors">
-                  Rafael Trends Research
-                </h2>
                 <p className="text-gray-600 text-lg font-light leading-relaxed">
-                  Global defense systems
+                  Trends Research. Global Defence Systems
                 </p>
               </div>
               <Button

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
@@ -111,7 +112,7 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
   const getCategorySubtitle = () => {
     return category === 'fashion'
       ? 'Discover the latest global fashion trends with AI-powered research. Explore cutting-edge insights and developments shaping the future.'
-      : 'Global defense systems';
+      : 'Trends Research. Global Defence Systems';
   };
 
   const renderSkeletons = () => {
@@ -149,16 +150,23 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
     <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
       {/* Header Section */}
       <div className="text-center mb-16 animate-fade-in-up">
-        <h1 className="font-serif text-5xl md:text-7xl text-gray-900 mb-6 tracking-tight">
-          {category === 'fashion' ? (
-            <>
-              {getCategoryTitle()}<br />
-              <span className="text-gradient">Trends Research</span>
-            </>
-          ) : (
-            <span className="text-gradient">{getCategoryTitle()} Research</span>
-          )}
-        </h1>
+        {category === 'military' ? (
+          <div className="mb-6 flex justify-center">
+            <Image
+              src="/Rafael.png"
+              alt="Rafael Logo"
+              width={300}
+              height={150}
+              priority
+              className="max-w-full h-auto"
+            />
+          </div>
+        ) : (
+          <h1 className="font-serif text-5xl md:text-7xl text-gray-900 mb-6 tracking-tight">
+            {getCategoryTitle()}<br />
+            <span className="text-gradient">Trends Research</span>
+          </h1>
+        )}
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light leading-relaxed">
           {getCategorySubtitle()}
         </p>

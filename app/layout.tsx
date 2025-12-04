@@ -3,8 +3,11 @@ import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
 
 export const metadata: Metadata = {
-  title: "Fashion Trends Research",
-  description: "Discover the latest global fashion trends with AI-powered research",
+  title: "KNBL Trends Research",
+  description: "Discover the latest global trends with AI-powered research",
+  icons: {
+    icon: "/knbl.png",
+  },
 };
 
 export default function RootLayout({
