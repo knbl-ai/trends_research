@@ -22,9 +22,7 @@ const nextConfig = {
       },
     ],
   },
-  // Empty turbopack config for Next.js 16+ compatibility
-  turbopack: {},
-  webpack: (config, { isServer }) => {
+    webpack: (config, { isServer }) => {
     // Suppress warnings for optional MongoDB dependencies
     if (isServer) {
       config.externals.push({
