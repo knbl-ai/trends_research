@@ -7,8 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
 import { MilitaryTrendCard } from '@/components/MilitaryTrendCard';
 import { SearchingAnimation } from '@/components/SearchingAnimation';
-import { TrendsApiResponse, TrendCategory, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument } from '@/lib/types';
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Shield, Zap, Ship, Radio, Briefcase } from 'lucide-react';
+import { TrendsApiResponse, TrendCategory, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument, BakeryPromptDocument } from '@/lib/types';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Shield, Zap, Ship, Radio, Briefcase, UtensilsCrossed, Wheat, Cake, Gift, Croissant, Share2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface TrendsDisplayProps {
@@ -19,7 +19,7 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
   const [trends, setTrends] = useState<TrendsApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [prompts, setPrompts] = useState<(FashionPromptDocument | MilitaryPromptDocument)[]>([]);
+  const [prompts, setPrompts] = useState<(FashionPromptDocument | MilitaryPromptDocument | BakeryPromptDocument)[]>([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState<SubcategoryType | null>(null);
   const [promptsLoading, setPromptsLoading] = useState(true);
 
@@ -54,7 +54,7 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
     setError(null);
 
     try {
-      // Fashion gets 3 images (vertical), military gets 1 image (horizontal)
+      // Fashion gets 3 images (vertical), military and bakery get 1 image (horizontal)
       const numImages = category === 'fashion' ? 3 : 1;
 
       const response = await fetch('/api/trends', {
@@ -96,7 +96,14 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
       'counterterrorism-intelligence': Shield,
       'operational-innovation': Zap,
       'drones': Radio,
-      'employer-branding': Briefcase
+      'employer-branding': Briefcase,
+      // Bakery icons
+      'hosting-platters': UtensilsCrossed,
+      'breads': Wheat,
+      'cakes': Cake,
+      'gift-boxes': Gift,
+      'patisserie': Croissant,
+      'bakery-social-media': Share2
     };
     return iconMap[id] || TrendingUp;
   };
@@ -106,13 +113,19 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
   };
 
   const getCategoryTitle = () => {
-    return category === 'fashion' ? 'Fashion' : 'Rafael Trends';
+    if (category === 'fashion') return 'Fashion';
+    if (category === 'military') return 'Rafael Trends';
+    return 'Roladin Trends';
   };
 
   const getCategorySubtitle = () => {
-    return category === 'fashion'
-      ? 'Discover the latest global fashion trends with AI-powered research. Explore cutting-edge insights and developments shaping the future.'
-      : 'Trends Research. Global Defence Systems';
+    if (category === 'fashion') {
+      return 'Discover the latest global fashion trends with AI-powered research. Explore cutting-edge insights and developments shaping the future.';
+    }
+    if (category === 'military') {
+      return 'Trends Research. Global Defence Systems';
+    }
+    return 'Bakery Trends Research';
   };
 
   const renderSkeletons = () => {
@@ -155,6 +168,17 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
             <Image
               src="/Rafael.png"
               alt="Rafael Logo"
+              width={300}
+              height={150}
+              priority
+              className="max-w-full h-auto"
+            />
+          </div>
+        ) : category === 'bakery' ? (
+          <div className="mb-6 flex justify-center">
+            <Image
+              src="/roladin.png"
+              alt="Roladin Logo"
               width={300}
               height={150}
               priority
@@ -255,6 +279,7 @@ export function TrendsDisplay({ category }: TrendsDisplayProps) {
                 {category === 'fashion' ? (
                   <TrendCard trend={trend} />
                 ) : (
+                  // Military and Bakery both use horizontal 16:9 images
                   <MilitaryTrendCard trend={trend} />
                 )}
               </div>

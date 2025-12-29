@@ -6,8 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { TrendCard } from '@/components/TrendCard';
 import { MilitaryTrendCard } from '@/components/MilitaryTrendCard';
 import { SearchingAnimation } from '@/components/SearchingAnimation';
-import { TrendsApiResponse, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument, TrendCategory } from '@/lib/types';
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Save, Shield, Zap, Ship, Radio, Briefcase } from 'lucide-react';
+import { TrendsApiResponse, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument, BakeryPromptDocument, TrendCategory } from '@/lib/types';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Save, Shield, Zap, Ship, Radio, Briefcase, UtensilsCrossed, Wheat, Cake, Gift, Croissant, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -22,7 +22,7 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<SubcategoryType | null>(null);
-  const [prompts, setPrompts] = useState<(FashionPromptDocument | MilitaryPromptDocument)[]>([]);
+  const [prompts, setPrompts] = useState<(FashionPromptDocument | MilitaryPromptDocument | BakeryPromptDocument)[]>([]);
   const [promptsLoading, setPromptsLoading] = useState(true);
   const [customPrompts, setCustomPrompts] = useState<Record<SubcategoryType, string>>({} as Record<SubcategoryType, string>);
   const [includeImages, setIncludeImages] = useState(true);
@@ -42,7 +42,7 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
         if (data.success) {
           setPrompts(data.data);
           // Initialize customPrompts with fetched data
-          const promptsMap = data.data.reduce((acc: Record<SubcategoryType, string>, prompt: FashionPromptDocument | MilitaryPromptDocument) => {
+          const promptsMap = data.data.reduce((acc: Record<SubcategoryType, string>, prompt: FashionPromptDocument | MilitaryPromptDocument | BakeryPromptDocument) => {
             acc[prompt.id] = prompt.prompt;
             return acc;
           }, {} as Record<SubcategoryType, string>);
@@ -110,7 +110,14 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
       'counterterrorism-intelligence': Shield,
       'operational-innovation': Zap,
       'drones': Radio,
-      'employer-branding': Briefcase
+      'employer-branding': Briefcase,
+      // Bakery icons
+      'hosting-platters': UtensilsCrossed,
+      'breads': Wheat,
+      'cakes': Cake,
+      'gift-boxes': Gift,
+      'patisserie': Croissant,
+      'bakery-social-media': Share2
     };
     return iconMap[id] || TrendingUp;
   };
@@ -127,7 +134,9 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
   };
 
   const getCategoryTitle = () => {
-    return category === 'fashion' ? 'Fashion' : 'Military';
+    if (category === 'fashion') return 'Fashion';
+    if (category === 'military') return 'Military';
+    return 'Bakery';
   };
 
   const handleUpdatePrompt = async (id: SubcategoryType) => {
@@ -348,6 +357,7 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
                 {category === 'fashion' ? (
                   <TrendCard trend={trend} />
                 ) : (
+                  // Military and Bakery both use horizontal 16:9 images
                   <MilitaryTrendCard trend={trend} />
                 )}
 

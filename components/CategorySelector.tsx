@@ -17,7 +17,7 @@ export function CategorySelector() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
         {/* Fashion Card */}
         <Link href="/fashion" className="group">
           <div className="relative overflow-hidden rounded-2xl border-2 border-gray-200 bg-white/60 backdrop-blur-sm hover:bg-white hover:border-black transition-all duration-300 hover:shadow-2xl hover:scale-105 p-12">
@@ -67,6 +67,35 @@ export function CategorySelector() {
                 className="mt-4 border-gray-300 hover:bg-black hover:text-white transition-all duration-300"
               >
                 Explore Military Trends
+              </Button>
+            </div>
+          </div>
+        </Link>
+
+        {/* Bakery Card */}
+        <Link href="/bakery" className="group">
+          <div className="relative overflow-hidden rounded-2xl border-2 border-gray-200 bg-white/60 backdrop-blur-sm hover:bg-white hover:border-black transition-all duration-300 hover:shadow-2xl hover:scale-105 p-12">
+            <div className="flex flex-col items-center text-center space-y-6">
+              <div className="h-24 flex items-center justify-center">
+                <Image
+                  src="/roladin.png"
+                  alt="Roladin Logo"
+                  width={200}
+                  height={60}
+                  priority
+                  className="w-auto max-h-16 object-contain group-hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+              <div>
+                <p className="text-gray-600 text-lg font-light leading-relaxed">
+                  Trends Research. Global Bakery & Patisserie
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                className="mt-4 border-gray-300 hover:bg-black hover:text-white transition-all duration-300"
+              >
+                Explore Bakery Trends
               </Button>
             </div>
           </div>

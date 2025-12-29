@@ -7,11 +7,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = (searchParams.get('category') || 'fashion') as TrendCategory;
 
-    if (category !== 'fashion' && category !== 'military') {
+    if (category !== 'fashion' && category !== 'military' && category !== 'bakery') {
       return NextResponse.json(
         {
           success: false,
-          error: 'Invalid category. Must be "fashion" or "military"'
+          error: 'Invalid category. Must be "fashion", "military", or "bakery"'
         },
         { status: 400 }
       );

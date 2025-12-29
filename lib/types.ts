@@ -29,19 +29,21 @@ export interface TrendsApiRequest {
   type: "basic" | "reasoning" | "deep";
   prompt: string;
   images_num: number;
-  trend_category?: 'fashion' | 'military';
+  trend_category?: 'fashion' | 'military' | 'bakery';
   aspect_ratio?: '3:4' | '16:9';
   language: string;
   production: boolean;
 }
 
-export type TrendCategory = 'fashion' | 'military';
+export type TrendCategory = 'fashion' | 'military' | 'bakery';
 
 export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'wellness';
 
 export type MilitaryType = 'air-sea-land' | 'counterterrorism-intelligence' | 'operational-innovation' | 'drones' | 'employer-branding';
 
-export type SubcategoryType = FashionType | MilitaryType;
+export type BakeryType = 'hosting-platters' | 'breads' | 'cakes' | 'gift-boxes' | 'patisserie' | 'bakery-social-media';
+
+export type SubcategoryType = FashionType | MilitaryType | BakeryType;
 
 export interface FashionPromptDocument {
   _id?: string;
@@ -61,7 +63,16 @@ export interface MilitaryPromptDocument {
   updatedAt: Date;
 }
 
-export type TrendPromptDocument = FashionPromptDocument | MilitaryPromptDocument;
+export interface BakeryPromptDocument {
+  _id?: string;
+  id: BakeryType;
+  name: string;
+  prompt: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type TrendPromptDocument = FashionPromptDocument | MilitaryPromptDocument | BakeryPromptDocument;
 
 // User and Authentication Types
 export type UserRole = 'admin' | 'editor' | 'viewer';
