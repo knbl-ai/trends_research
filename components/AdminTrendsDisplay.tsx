@@ -7,7 +7,7 @@ import { TrendCard } from '@/components/TrendCard';
 import { MilitaryTrendCard } from '@/components/MilitaryTrendCard';
 import { SearchingAnimation } from '@/components/SearchingAnimation';
 import { TrendsApiResponse, SubcategoryType, FashionPromptDocument, MilitaryPromptDocument, BakeryPromptDocument, TrendCategory } from '@/lib/types';
-import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Save, Shield, Zap, Ship, Radio, Briefcase, UtensilsCrossed, Wheat, Cake, Gift, Croissant, Share2 } from 'lucide-react';
+import { TrendingUp, AlertCircle, Sparkles, Users, Shirt, Heart, Star, Leaf, ExternalLink, Save, Shield, Zap, Ship, Radio, Briefcase, UtensilsCrossed, Wheat, Cake, Gift, Croissant, Share2, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -105,6 +105,7 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
       'social-media': Heart,
       'celebrities': Star,
       'wellness': Leaf,
+      'summer-2026': Sun,
       // Military icons
       'air-sea-land': Ship,
       'counterterrorism-intelligence': Shield,
@@ -232,11 +233,10 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
           </Label>
         </div>
 
-        <div className={`grid gap-4 mb-8 ${
-          category === 'military'
+        <div className={`grid gap-4 mb-8 ${category === 'military'
             ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5'
             : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'
-        }`}>
+          }`}>
           {promptsLoading ? (
             <div className="col-span-full text-center py-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
@@ -252,11 +252,10 @@ export function AdminTrendsDisplay({ category }: AdminTrendsDisplayProps) {
                   onClick={() => handleSubcategorySelect(prompt.id)}
                   disabled={loading}
                   variant={isSelected ? "default" : "outline"}
-                  className={`p-6 h-auto min-h-[120px] flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:scale-105 ${
-                    isSelected
+                  className={`p-6 h-auto min-h-[120px] flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:scale-105 ${isSelected
                       ? 'bg-black hover:bg-gray-800 text-white border-black'
                       : 'border-gray-300 hover:bg-gray-50 text-gray-700'
-                  }`}
+                    }`}
                 >
                   <IconComponent className="h-6 w-6 flex-shrink-0" />
                   <span className="text-sm font-medium text-center whitespace-normal break-words leading-tight">{prompt.name}</span>
