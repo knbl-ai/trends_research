@@ -37,7 +37,7 @@ export interface TrendsApiRequest {
 
 export type TrendCategory = 'fashion' | 'military' | 'bakery';
 
-export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'wellness';
+export type FashionType = 'high-fashion' | 'street-fashion' | 'casual' | 'social-media' | 'celebrities' | 'wellness' | 'summer-2026';
 
 export type MilitaryType = 'air-sea-land' | 'counterterrorism-intelligence' | 'operational-innovation' | 'drones' | 'employer-branding';
 
