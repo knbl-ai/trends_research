@@ -37,4 +37,5 @@ export interface NewsletterOverviewTemplateData {
   categories: TrendsOverviewCategory[];
   generatedAt: string;
   language: string;
+  trendType?: 'fashion' | 'bakery';
 }

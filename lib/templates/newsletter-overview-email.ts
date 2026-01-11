@@ -1,7 +1,7 @@
 import { NewsletterOverviewTemplateData } from '../types-overview';
 
 export function generateNewsletterOverviewHTML(data: NewsletterOverviewTemplateData): string {
-  const { categories, generatedAt, language } = data;
+  const { categories, generatedAt, language, trendType = 'fashion' } = data;
 
   // Hebrew text
   const isHebrew = language === 'Hebrew';
@@ -33,10 +33,10 @@ export function generateNewsletterOverviewHTML(data: NewsletterOverviewTemplateD
           <tr>
             <td style="padding: 60px 40px 40px 40px; text-align: center; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
               <h1 style="margin: 0 0 16px 0; font-family: ${isHebrew ? "'Heebo', 'Assistant'," : "'Playfair Display', Georgia,"} serif; font-size: 48px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.02em; line-height: 1.1;">
-                ${isHebrew ? 'טרנדי אופנה שבועי' : 'Weekly Fashion Trends'}
+                ${isHebrew ? (trendType === 'bakery' ? 'סקירת טרנדים בעולם האפייה' : 'טרנדי אופנה שבועי') : (trendType === 'bakery' ? 'Weekly Bakery Trends' : 'Weekly Fashion Trends')}
               </h1>
               <p style="margin: 0; font-size: 18px; color: #666666; font-weight: 300; line-height: 1.6;">
-                ${isHebrew ? 'סקירה שבועית של טרנדי האופנה' : 'Your weekly fashion trends overview'}
+                ${isHebrew ? (trendType === 'bakery' ? 'סקירה שבועית של טרנדים בעולם האפייה' : 'סקירה שבועית של טרנדי האופנה') : (trendType === 'bakery' ? 'Your weekly bakery trends overview' : 'Your weekly fashion trends overview')}
               </p>
               <p style="margin: 12px 0 0 0; font-size: 14px; color: #999999;">
                 ${new Date(generatedAt).toLocaleDateString(isHebrew ? 'he-IL' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -95,7 +95,7 @@ export function generateNewsletterOverviewHTML(data: NewsletterOverviewTemplateD
                 ${isHebrew ? 'מקורות ומראי מקום' : 'Sources & References'}
               </h3>
               <p style="margin: 0 0 24px 0; text-align: ${textAlign}; color: #666666; font-size: 16px;">
-                ${isHebrew ? 'כל המקורות ששימשו למחקר טרנדי האופנה' : 'All sources used to research these fashion trends'}
+                ${isHebrew ? (trendType === 'bakery' ? 'כל המקורות ששימשו למחקר טרנדי האפייה' : 'כל המקורות ששימשו למחקר טרנדי האופנה') : (trendType === 'bakery' ? 'All sources used to research these bakery trends' : 'All sources used to research these fashion trends')}
               </p>
               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 ${allReferences.map((reference, index) => `
@@ -116,7 +116,7 @@ export function generateNewsletterOverviewHTML(data: NewsletterOverviewTemplateD
           <tr>
             <td style="padding: 40px; background-color: #1a1a1a; text-align: center;">
               <p style="margin: 0 0 8px 0; font-size: 14px; color: #ffffff; font-weight: 300;">
-                ${isHebrew ? 'מופעל על ידי מחקר טרנדים מונחה בינה מלאכותית' : 'Powered by AI-driven fashion trend research'}
+                ${isHebrew ? (trendType === 'bakery' ? 'מופעל על ידי מחקר טרנדים בעולם האפייה מונחה בינה מלאכותית' : 'מופעל על ידי מחקר טרנדים מונחה בינה מלאכותית') : (trendType === 'bakery' ? 'Powered by AI-driven bakery trend research' : 'Powered by AI-driven fashion trend research')}
               </p>
               <p style="margin: 0; font-size: 12px; color: #999999;">
                 &copy; ${new Date().getFullYear()} Kanibal. ${isHebrew ? 'כל הזכויות שמורות' : 'All rights reserved'}.

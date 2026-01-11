@@ -1,0 +1,62 @@
+{
+    "recipients": [
+        {
+            "email": "vladi@kanibal.co.il",
+            "name": "Vladi",
+            "active": true,
+            "addedAt": "2025-10-23"
+        },
+        {
+            "email": "ravit@kanibal.co.il",
+            "name": "Ravit",
+            "active": true,
+            "addedAt": "2025-10-23"
+        },
+        {
+            "email": "raz@kanibal.co.il",
+            "name": "Raz",
+            "active": true,
+            "addedAt": "2025-10-23"
+        },
+        {
+            "email": "daniela@kanibal.co.il",
+            "name": "Daniela",
+            "active": true,
+            "addedAt": "2025-10-23"
+        },
+        {
+            "email": "noa@roladin.co.il",
+            "name": "Noa",
+            "active": true,
+            "addedAt": "2026-01-11"
+        },
+        {
+            "email": "orit@roladin.co.il",
+            "name": "Orit",
+            "active": true,
+            "addedAt": "2026-01-11"
+        },
+        {
+            "email": "Holly@roladin.co.il",
+            "name": "Holly",
+            "active": true,
+            "addedAt": "2026-01-11"
+        },
+        {
+            "email": "reut@roladin.co.il",
+            "name": "Reut",
+            "active": true,
+            "addedAt": "2026-01-11"
+        },
+        {
+            "email": "natalia@roladin.co.il",
+            "name": "Natalia",
+            "active": true,
+            "addedAt": "2026-01-11"
+        }
+    ],
+    "metadata": {
+        "lastUpdated": "2026-01-11",
+        "description": "Newsletter recipients list for weekly bakery trends emails"
+    }
+}
